@@ -3,6 +3,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tarver-site",
   "compatibility_date": "2025-10-01",
+  // Lets Cloudflare build a preview of each branch (npx wrangler preview). Empty is enough.
+  "previews": {},
   "assets": {
     // Only this folder is uploaded. The prototype, design system sources and build script stay out.
     "directory": "./site",
