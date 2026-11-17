@@ -1,0 +1,10 @@
+:root{
+--surface-100:#fbf6ec;--surface-200:#f3ebdb;--surface-card:#fffdf8;--ink:#1f1a14;--ink-muted:#5e5547;--ink-block:#1f1a14;
+--hairline:#ddd1ba;--border-strong:#8a7c66;--brand:#c2410c;--brand-strong:#9a3412;--on-brand:#ffffff;--brand-tint:#f8dccb;
+--sun:#f5b82e;--teal:#0b6b73;--teal-tint:#d6ecee;--plum:#7a2e6b;--danger:#a61b3b;--focus:#1f5fa8;
+--font-display:"Fraunces",Georgia,"Times New Roman",serif;--font-sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+--font-caps:"Josefin Sans","Figtree",system-ui,sans-serif;
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;
+--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;
+--motion-fast:100ms;--motion-base:150ms;--motion-slow:250ms;--ease-out:cubic-bezier(.2,.7,.2,1);
+}

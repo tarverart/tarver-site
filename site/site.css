@@ -1,0 +1,11 @@
+/* Page base for tarverart.com. Components come from tarver/bundle.css and are not restyled here. */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--surface-100);color:var(--ink);font-family:var(--font-sans)}
+/* Policy pages get their section cards from Tarver.policy.style; hold them back until it has run so the page does not jump. */
+.tv-wait .tv-policy{visibility:hidden}
+/* Not found page */
+.tv-notfound{margin-bottom:var(--space-16)}
+.tv-notfound .tv-btn{margin-top:var(--space-4);text-decoration:none}
+/* Buy is a link to checkout; it keeps the button's look. */
+a.tv-print__buy{text-decoration:none}
