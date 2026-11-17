@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarver Round 32: Final draft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&family=Josefin+Sans:wght@700&display=swap">
+<link rel="stylesheet" href="tarver/bundle.css">
+<style>
+
+:root{
+--surface-100:#fbf6ec;--surface-200:#f3ebdb;--surface-card:#fffdf8;--ink:#1f1a14;--ink-muted:#5e5547;--ink-block:#1f1a14;
+--hairline:#ddd1ba;--border-strong:#8a7c66;--brand:#c2410c;--brand-strong:#9a3412;--on-brand:#ffffff;--brand-tint:#f8dccb;
+--sun:#f5b82e;--teal:#0b6b73;--teal-tint:#d6ecee;--plum:#7a2e6b;--danger:#a61b3b;--focus:#1f5fa8;
+--font-display:"Fraunces",Georgia,"Times New Roman",serif;--font-sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+--font-caps:"Josefin Sans","Figtree",system-ui,sans-serif;
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;
+--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-pill:999px;
+--motion-fast:100ms;--motion-base:150ms;--motion-slow:250ms;--ease-out:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--surface-200);color:var(--ink);font-family:var(--font-sans)}
+
+/* ============ Review chrome (rv-, not part of any component) ============ */
+.rv{max-width:1240px;margin:0 auto;padding:var(--space-8) var(--space-4) var(--space-16)}
+.rv-kicker{margin:0;font:700 10px/16px var(--font-caps);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted)}
+.rv-h1{margin:var(--space-1) 0 var(--space-3);font:700 40px/44px var(--font-display);letter-spacing:-.015em}
+.rv-lead{max-width:64ch;margin:0 0 var(--space-3);font:400 16px/24px var(--font-sans);color:var(--ink-muted)}
+.rv-h2{margin:var(--space-16) 0 var(--space-2);font:600 30px/36px var(--font-display);letter-spacing:-.01em}
+.rv-bar{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center;margin:var(--space-4) 0}
+.rv-seg{display:inline-flex;padding:3px;border-radius:var(--radius-pill);background:var(--surface-100);border:1.5px solid var(--hairline)}
+.rv-seg button{appearance:none;border:0;background:transparent;padding:8px 14px;border-radius:var(--radius-pill);font:600 14px/18px var(--font-sans);color:var(--ink);cursor:pointer}
+.rv-seg button[aria-pressed="true"]{background:var(--ink-block);color:var(--surface-100)}
+.rv-btn{appearance:none;border:0;background:var(--surface-100);border:1.5px solid var(--hairline);padding:8px 14px;border-radius:var(--radius-pill);font:600 14px/18px var(--font-sans);cursor:pointer}
+.rv-frame{margin:0 auto;background:var(--surface-100);border-radius:28px;overflow:hidden;box-shadow:0 0 0 1.5px var(--hairline),0 18px 40px rgba(31,26,20,.10);transition:max-width var(--motion-slow) var(--ease-out)}
+.rv-frame[data-w="phone"]{max-width:390px}
+.rv-frame[data-w="computer"]{max-width:1180px;border-radius:16px}
+.rv-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-3);margin-top:var(--space-6)}
+.rv-note{padding:var(--space-6);border-radius:var(--radius-lg);background:var(--surface-card);border:1.5px solid var(--hairline)}
+.rv-note h3{margin:0 0 var(--space-2);font:700 18px/24px var(--font-display)}
+.rv-note ul{margin:0;padding-left:18px;font:400 14px/21px var(--font-sans);color:var(--ink-muted)}
+.rv-note li+li{margin-top:6px}
+.rv-pending{background:#fde9b8;border-radius:6px;padding:0 4px;box-shadow:inset 0 0 0 1.5px var(--sun);color:var(--ink);font-weight:600;white-space:normal}
+.rv-tabs{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+
+.rv-bar--sticky{position:sticky;top:0;z-index:40;padding:var(--space-2) 0;background:var(--surface-200)}
+.rv-lab{font:700 10px/16px var(--font-caps);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);margin:0 2px 0 6px}
+.rv-seg--sm button{padding:6px 11px;font-size:13px}
+.rv-btn[aria-pressed="true"]{background:var(--ink-block);color:var(--surface-100);border-color:var(--ink-block)}
+.rv-status{flex-basis:100%;margin:2px 0 0;font:500 13px/19px var(--font-sans);color:var(--ink-muted)}
+.rv-status b{color:var(--ink)}
+.rv-frame{position:relative}
+.rv-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;padding:10px 16px;border-radius:var(--radius-pill);background:var(--ink-block);color:var(--surface-100);font:600 14px/20px var(--font-sans);opacity:0;transition:opacity var(--motion-base) var(--ease-out);pointer-events:none}
+.rv-toast.on{opacity:1}
+.rv-co{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(31,26,20,.45)}
+.rv-co__card{width:100%;max-width:380px;padding:24px;border-radius:16px;background:#fff;box-shadow:0 18px 40px rgba(31,26,20,.25);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#30313d}
+.rv-co__tag{margin:0 0 12px;font:600 11px/16px system-ui;letter-spacing:.04em;text-transform:uppercase;color:#6d6e78}
+.rv-co__card h3{margin:0 0 4px;font:600 18px/24px system-ui}
+.rv-co__card p{margin:0 0 16px;font:400 14px/20px system-ui;color:#6d6e78}
+.rv-co__row{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #e6e6e6;font:400 14px/20px system-ui}
+.rv-co__pay{display:block;width:100%;margin-top:16px;padding:12px;border:0;border-radius:8px;background:#30313d;color:#fff;font:600 15px/20px system-ui;cursor:pointer}
+.rv-co__back{display:block;width:100%;margin-top:8px;padding:10px;border:0;background:none;color:#6d6e78;font:500 14px/20px system-ui;cursor:pointer}
+
+/* ===== BuyReaction (draft) ===== */
+.tv-buyrx{position:relative}
+.tv-buyrx__stage{position:absolute;left:0;right:0;bottom:100%;height:118px;overflow:hidden;pointer-events:none;display:flex;justify-content:center;align-items:flex-end}
+.tv-buyrx__crew{position:relative;display:flex;align-items:flex-end;justify-content:center;transform:translateY(110%)}
+.tv-buyrx__crew svg{height:184px;width:auto;margin-bottom:-80px;overflow:visible;flex:none}
+.tv-buyrx__crew[data-who="family"] svg + svg{margin-left:-64px}
+.tv-buyrx__heart{position:absolute;left:50%;top:2px;width:34px;height:34px;margin-left:-17px;transform:scale(0);opacity:0}
+.tv-buyrx__spark{position:absolute;left:50%;top:14px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--sun);transform:scale(0);opacity:0}
+
+/* ===== About (draft, round 31) ===== */
+.tv-about{max-width:1040px;margin:0 auto;padding:0 var(--space-4) var(--space-12)}
+.tv-about__hero{display:grid;grid-template-columns:1fr;gap:var(--space-6);align-items:center;padding:var(--space-6) 0 var(--space-6)}
+.tv-about__intro h1{margin:var(--space-1) 0 var(--space-3);font:700 44px/48px var(--font-display);letter-spacing:-.02em}
+.tv-about__intro p.tv-about__blurb{margin:0;font:400 18px/28px var(--font-sans);max-width:42ch}
+
+/* The postcard */
+.tv-pcard{position:relative;isolation:isolate;margin:0;padding:22px 16px 0 6px}
+.tv-pcard__under{position:absolute;inset:34px 4px 10px 14px;border-radius:8px;background:var(--teal);transform:rotate(3deg)}
+.tv-pcard__front{position:relative;background:var(--surface-card);padding:12px 12px 14px;border-radius:8px;box-shadow:0 1px 0 var(--hairline),0 18px 32px rgba(31,26,20,.18);transform:rotate(-2deg)}
+.tv-pcard__photo{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:50% 40%;border-radius:4px}
+.tv-pcard__foot{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);padding:10px 2px 0}
+.tv-pcard__greet{font:700 20px/24px var(--font-display);letter-spacing:-.01em;color:var(--ink)}
+.tv-pcard__mark{width:30px;height:30px;flex:none}
+.tv-pcard__stamp{position:absolute;right:-4px;top:0;width:76px;height:auto;transform:rotate(7deg);filter:drop-shadow(0 3px 4px rgba(31,26,20,.22));z-index:2}
+.tv-pcard__post{position:absolute;right:44px;top:30px;width:180px;height:auto;z-index:3;opacity:.82;transform:rotate(-6deg);pointer-events:none}
+.tv-pcard__post *{fill:none;stroke:var(--ink-block)}
+.tv-pcard__post text{fill:var(--ink-block);stroke:none;font:700 9px var(--font-caps);letter-spacing:.12em}
+.tv-pcard__post .pm-big{font-size:11px;letter-spacing:.04em}
+.tv-about__label{position:relative;margin:20px 0 0 6px;padding:10px 14px;background:var(--surface-card);border-radius:4px;box-shadow:inset 0 0 0 1.5px var(--hairline);max-width:260px;font:400 13px/19px var(--font-sans);color:var(--ink-muted)}
+.tv-about__label b{display:block;font:700 14px/20px var(--font-sans);color:var(--ink)}
+.tv-about__label i{display:block;font-style:italic;color:var(--ink)}
+
+.tv-about__sec{padding:var(--space-8) 0 0}
+.tv-about__sec > h2{margin:var(--space-1) 0 var(--space-2);font:700 32px/36px var(--font-display);letter-spacing:-.01em}
+.tv-about__sec > p.tv-about__line{margin:0 0 var(--space-6);max-width:46ch;font:400 16px/24px var(--font-sans);color:var(--ink-muted)}
+
+/* Exhibits */
+.tv-exhibits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3);margin:0;padding:0;list-style:none}
+.tv-exhibit{display:flex;flex-direction:column;gap:var(--space-2)}
+.tv-exhibit__stage{appearance:none;border:0;padding:0;position:relative;display:block;width:100%;height:240px;border-radius:var(--radius-lg);background:var(--surface-200);overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform var(--motion-fast) var(--ease-out);isolation:isolate}
+.tv-exhibit__stage:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.tv-exhibit__stage:active{transform:scale(.97)}
+.tv-exhibit__bg{position:absolute;inset:0;display:block}
+.tv-exhibit__bg svg{display:block;width:100%;height:100%}
+.tv-exhibit__fig{position:absolute;left:0;right:0;bottom:34px;display:flex;justify-content:center;align-items:flex-end}
+.tv-exhibit__fig svg{height:176px;width:auto;overflow:visible}
+.tv-exhibit[data-cat] .tv-exhibit__fig svg,.tv-exhibit__run svg{height:132px;width:auto;overflow:visible;display:block}
+.tv-exhibit__run{position:absolute;left:0;bottom:0;opacity:0;transform-origin:50% 100%}
+.tv-exhibit__plinth{position:absolute;left:50%;bottom:0;width:62%;height:40px;margin-left:-31%;border-radius:12px 12px 0 0;background:var(--ink-block)}
+.tv-exhibit__plinth::after{content:"";position:absolute;left:50%;top:13px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--sun)}
+.tv-exhibit[data-k="sky"] .tv-exhibit__plinth{box-shadow:inset 0 3px 0 rgba(255,253,248,.28)}
+.tv-exhibit[data-k="zara"] .tv-exhibit__fig{bottom:44px}
+.tv-exhibit__cushion{position:absolute;left:50%;bottom:36px;width:46%;height:16px;margin-left:-23%;border-radius:999px;background:var(--plum);transform-origin:50% 100%}
+.tv-exhibit__cushion::before,.tv-exhibit__cushion::after{content:"";position:absolute;top:4px;width:8px;height:8px;border-radius:50%;background:var(--sun)}
+.tv-exhibit__cushion::before{left:-4px}.tv-exhibit__cushion::after{right:-4px}
+.tv-exhibit__zz{position:absolute;left:60%;bottom:128px;width:0;height:0}
+.tv-exhibit__zz i{position:absolute;left:0;bottom:0;font:700 18px/1 var(--font-display);font-style:normal;color:var(--ink);opacity:0}
+.tv-exhibit__label{padding:10px 12px;border-radius:8px;background:var(--surface-card);box-shadow:inset 0 0 0 1.5px var(--hairline);font:400 13px/19px var(--font-sans);color:var(--ink-muted)}
+.tv-exhibit__label b{display:block;font:700 16px/22px var(--font-display);color:var(--ink)}
+.tv-exhibit__label i{display:block;font-style:italic;color:var(--ink)}
+.tv-promises{display:grid;grid-template-columns:1fr;gap:var(--space-2);margin:0;padding:0;list-style:none}
+.tv-promise{display:grid;grid-template-columns:40px 1fr;gap:var(--space-3);align-items:center;padding:var(--space-4);border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1.5px var(--hairline)}
+.tv-promise svg{width:36px;height:36px;display:block}
+.tv-promise b{display:block;font:700 17px/23px var(--font-sans)}
+.tv-promise span{display:block;font:400 15px/22px var(--font-sans);color:var(--ink-muted)}
+@container tv-web (min-width:720px){
+ .tv-about{padding:0 var(--space-8) var(--space-16)}
+ .tv-about__hero{grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:var(--space-12);padding:var(--space-12) 0 var(--space-8)}
+ .tv-about__intro h1{font-size:60px;line-height:64px}
+ .tv-exhibits{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-4)}
+ .tv-exhibit__stage{height:290px}
+ .tv-exhibit__fig svg{height:214px}
+ .tv-exhibit[data-cat] .tv-exhibit__fig svg,.tv-exhibit__run svg{height:156px}
+ .tv-exhibit__zz{bottom:146px}
+ .tv-promises{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* PrintListing collage: one wide photo plus two tall ones (proposed design system change) */
+.tv-print-collage[data-shape="wide-tall"] .tv-print-ph:first-child{grid-column:span 2;grid-row:auto;aspect-ratio:4/3}
+.tv-print-collage[data-shape="wide-tall"] .tv-print-ph:not(:first-child){grid-column:span 1;aspect-ratio:3/4}
+@container tv-web (min-width:720px){
+ .tv-print-collage[data-shape="wide-tall"]{grid-template-columns:16fr 9fr 9fr;align-items:start}
+ .tv-print-collage[data-shape="wide-tall"] .tv-print-ph:first-child{grid-column:auto;grid-row:auto;aspect-ratio:4/3}
+ .tv-print-collage[data-shape="wide-tall"] .tv-print-ph:not(:first-child){grid-column:auto;aspect-ratio:3/4}
+}
+
+/* ===== Round 32 ===== */
+/* Product photos: square box, photo always fills it */
+.tv-print__stage{height:auto;aspect-ratio:1/1}
+.tv-print__stage .tv-print__main,.tv-print__stage .tv-print__close{object-fit:cover}
+.tv-print__mag{appearance:none;border:0;background:none;padding:0;width:40px;height:40px;margin:0 -4px 0 -8px;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background var(--motion-fast) var(--ease-out),transform var(--motion-fast) var(--ease-out)}
+.tv-print__mag:hover{background:var(--surface-200)}
+.tv-print__mag:active{transform:scale(.92)}
+.tv-print__mag:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.tv-print__mag[aria-pressed="true"]{background:var(--sun)}
+.tv-print-sec .tv-print-copy{margin:var(--space-8) 0 0;padding-top:var(--space-4);border-top:1.5px solid var(--hairline);font:400 13px/19px var(--font-sans);color:var(--ink-muted)}
+
+/* Policy pages, styled */
+.tv-policy--v2 .tv-policy__toc{margin:0 0 var(--space-6)}
+.tv-policy--v2 .tv-policy__toc .tv-kicker{margin:0 0 var(--space-2)}
+.tv-policy--v2 .tv-policy__toc div{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.tv-policy__chip{display:inline-flex;align-items:center;min-height:36px;padding:6px 14px;border-radius:999px;background:var(--surface-card);box-shadow:inset 0 0 0 1.5px var(--hairline);font:600 14px/20px var(--font-sans);color:var(--ink);text-decoration:none;transition:background var(--motion-fast) var(--ease-out)}
+.tv-policy__chip:hover{background:var(--sun)}
+.tv-policy--v2 .tv-policy__sec{position:relative;margin:0 0 var(--space-4);padding:var(--space-6) 20px;border-top:0;border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1.5px var(--hairline);scroll-margin-top:16px}
+.tv-policy--v2 .tv-policy__sec h2{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
+.tv-policy__num{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--sun);font:700 13px/1 var(--font-caps);letter-spacing:.04em;color:var(--ink)}
+.tv-policy--v2 .tv-policy__sec:nth-of-type(even) .tv-policy__num{background:var(--teal);color:var(--surface-card)}
+.tv-policy--v2 .tv-policy__facts{display:grid;grid-template-columns:1fr;gap:var(--space-2)}
+.tv-policy__fact{padding:var(--space-3) var(--space-4);border-radius:12px;background:var(--surface-200)}
+.tv-policy--v2 .tv-policy__fact dt{padding:0;margin:0 0 2px}
+.tv-policy--v2 .tv-policy__fact dd{padding:0;margin:0}
+.tv-policy--v2 .tv-policy__end{position:relative;overflow:hidden;background:var(--teal-tint);box-shadow:inset 0 0 0 1.5px var(--hairline)}
+.tv-policy__endsun{position:absolute;right:-30px;top:-30px;width:84px;height:84px;border-radius:50%;background:var(--sun);opacity:.9}
+.tv-policy--v2 .tv-policy__end{padding-right:64px}
+.tv-policy--v2 .tv-policy__end strong,.tv-policy--v2 .tv-policy__end p{position:relative}
+@container tv-web (min-width:720px){
+ .tv-policy--v2 .tv-policy__sec{padding:var(--space-8)}
+ .tv-policy--v2 .tv-policy__end{padding-right:96px}
+ .tv-policy--v2 .tv-policy__facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3)}
+}
+
+/* Joined */
+.tv-joined{max-width:1040px;margin:0 auto;padding:var(--space-4) var(--space-4) var(--space-12)}
+.tv-joined__scene{position:relative;height:300px;border-radius:var(--radius-lg);overflow:hidden;box-shadow:inset 0 0 0 1.5px var(--ink-block)}
+.tv-joined__art{position:absolute;inset:0;width:100%;height:100%;display:block}
+.tv-joined__crew{position:absolute;left:0;right:0;bottom:34px;display:flex;justify-content:center;align-items:flex-end;pointer-events:none}
+.tv-joined__crew svg{height:150px;width:auto;overflow:visible}
+.tv-joined__crew svg+svg{margin-left:-34px}
+.tv-joined__card{position:relative;max-width:620px;margin:-28px auto 0;padding:var(--space-8) 20px var(--space-6);border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:inset 0 0 0 1.5px var(--hairline),0 14px 30px rgba(31,26,20,.10)}
+.tv-joined__card h1{margin:var(--space-1) 0 var(--space-3);font:700 40px/44px var(--font-display);letter-spacing:-.02em}
+.tv-joined__lead{margin:0 0 var(--space-6);font:400 18px/27px var(--font-sans)}
+.tv-joined__perks{margin:0 0 var(--space-6);padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--space-3)}
+.tv-joined__perks li{display:grid;grid-template-columns:28px 1fr;gap:var(--space-3);align-items:center;padding:var(--space-3) var(--space-4);border-radius:14px;background:var(--surface-200)}
+.tv-joined__perks svg{width:28px;height:28px;display:block}
+.tv-joined__perks b{display:block;font:700 16px/22px var(--font-sans)}
+.tv-joined__perks span{display:block;font:400 15px/21px var(--font-sans);color:var(--ink-muted)}
+.tv-joined__sign{margin:0 0 var(--space-6);font:italic 400 16px/24px var(--font-sans);color:var(--ink-muted)}
+.tv-joined__sign b{display:block;font:700 22px/28px var(--font-display);font-style:normal;color:var(--ink)}
+.tv-joined__actions{display:flex;flex-direction:column;align-items:center;gap:var(--space-4)}
+.tv-joined__actions .tv-btn{width:100%;text-decoration:none}
+@container tv-web (min-width:720px){
+ .tv-joined{padding:var(--space-6) var(--space-8) var(--space-16)}
+ .tv-joined__scene{height:400px}
+ .tv-joined__crew{bottom:54px}
+ .tv-joined__crew svg{height:200px}
+ .tv-joined__crew svg+svg{margin-left:-44px}
+ .tv-joined__card{margin-top:-48px;padding:40px 40px var(--space-8)}
+ .tv-joined__card h1{font-size:52px;line-height:56px}
+ .tv-joined__actions{flex-direction:row;justify-content:flex-start;gap:var(--space-6)}
+ .tv-joined__actions .tv-btn{width:auto;padding-left:32px;padding-right:32px}
+}
+
+</style>
+</head>
+<body>
+<main class="rv">
+ <p class="rv-kicker">Tarver design system · Round 32 · Final draft for review</p>
+ <h1 class="rv-h1">The whole site, clickable</h1>
+ <p class="rv-lead">Every page, with the walk-ins working the way they will on the real site. Click around like a visitor. Use New visit to start over as a fresh visitor. Yellow boxes are yours to fill in.</p>
+ <div class="rv-bar rv-bar--sticky">
+  <div class="rv-seg rv-seg--sm" data-size><button type="button" aria-pressed="true" data-w="phone">Phone</button><button type="button" aria-pressed="false" data-w="computer">Computer</button></div>
+  <button class="rv-btn" type="button" data-new>New visit</button>
+  <span class="rv-lab">Walk-in</span><div class="rv-seg rv-seg--sm" data-force><button type="button" aria-pressed="true" data-k="auto">Rotation</button><button type="button" aria-pressed="false" data-k="A">Lean</button><button type="button" aria-pressed="false" data-k="B">Beam</button><button type="button" aria-pressed="false" data-k="C">Umbrella</button><button type="button" aria-pressed="false" data-k="D">Family</button></div>
+  <button class="rv-btn" type="button" data-rm aria-pressed="false">Reduced motion</button>
+  <p class="rv-status" id="rv-status" aria-live="polite"></p>
+ </div>
+ <div class="rv-bar"><span class="rv-lab">Jump to</span><div class="rv-seg rv-seg--sm" data-page><button type="button" data-p="home" aria-pressed="true">Home</button><button type="button" data-p="about" aria-pressed="false">About</button><button type="button" data-p="help" aria-pressed="false">Help</button><button type="button" data-p="ship" aria-pressed="false">Shipping</button><button type="button" data-p="privacy" aria-pressed="false">Privacy</button><button type="button" data-p="terms" aria-pressed="false">Terms</button><button type="button" data-p="thanks" aria-pressed="false">Thank you</button><button type="button" data-p="joined" aria-pressed="false">Joined</button></div>
+  <span class="rv-lab">Thank you sky</span><div class="rv-seg rv-seg--sm" data-sky><button type="button" aria-pressed="true" data-k="clock">By clock</button><button type="button" aria-pressed="false" data-k="rise">Sunrise</button><button type="button" aria-pressed="false" data-k="set">Sunset</button></div></div>
+ <div class="rv-frame" data-w="phone" id="site"></div>
+ <div class="rv-notes">
+  <div class="rv-note"><h3>Home</h3><ul>
+   <li>New story copy. Copyright line sits lower, under a thin rule.</li>
+   <li>Rule: the main photo always fills its square box.</li>
+   <li>The magnifier is a button. No pill picked: it opens Pier. A pill picked: it goes back to the full view.</li>
+   <li>Footer tagline: Art that makes you smile.</li></ul></div>
+  <div class="rv-note"><h3>About</h3><ul>
+   <li>Your blurb and the Artist lines are in.</li>
+   <li>The phone menu now covers the postcard. The postmark no longer pokes through.</li>
+   <li>The four promise boxes center their icon and text.</li>
+   <li>Swapping the photo means changing one small block: photo, place, date, stamp word and greeting.</li></ul></div>
+  <div class="rv-note"><h3>Policies</h3><ul>
+   <li>In short stays on top. Then jump chips, then each section as its own card with a numbered sun badge.</li>
+   <li>The facts sit in soft tiles, two across on a computer.</li>
+   <li>Contact is now hello@tarverart.com everywhere.</li></ul></div>
+  <div class="rv-note"><h3>Joined (new)</h3><ul>
+   <li>Where Kit sends people after they confirm: tarverart.com/joined.</li>
+   <li>A mountain scene with a Tarver flag on the peak. You and Rachel pop up and wave hello.</li>
+   <li>One button back to the print. No Join box in the footer, since they just joined.</li></ul></div>
+ </div>
+</main>
+<div class="rv-toast" id="rv-toast" role="status"></div>
+
+<script src="tarver/bundle.js"></script>
+<script>
+var PAGES={"home": "<div class=\"tv-print\">\n <div class=\"tv-print__top\">\n  <div><div class=\"tv-print__stage\"><img class=\"tv-print__main\" src=\"img/hero.jpg\" alt=\"Tides at Jacksonville Beach, framed, leaning on a weathered shelf beside a surfboard\"><img class=\"tv-print__close\" alt=\"\"><p class=\"tv-print__hint\" aria-live=\"polite\"></p></div>\n  <div class=\"tv-print__pills\" role=\"group\" aria-label=\"Look closer\"><button class=\"tv-print__mag\" type=\"button\" aria-label=\"Look closer\" aria-pressed=\"false\"><svg class=\"tv-icon tv-ico\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle class=\"is\" cx=\"10.5\" cy=\"10.5\" r=\"5\"/><circle class=\"ln ip\" cx=\"10.5\" cy=\"10.5\" r=\"6.5\"/><path class=\"ln ib\" d=\"M15.5 15.5 21 21\"/></svg></button><button class=\"tv-chip\" data-tone=\"sun\" type=\"button\" aria-pressed=\"false\" data-tv-close data-src=\"img/zoom-pier.jpg\" data-alt=\"Close up of the pier\" data-hint=\"A fisherman on the pier who caught more than a fish.\">Pier</button><button class=\"tv-chip\" data-tone=\"sun\" type=\"button\" aria-pressed=\"false\" data-tv-close data-src=\"img/zoom-beach.jpg\" data-alt=\"Close up of the beach\" data-hint=\"The artist and his wife, somewhere on the beach.\">Beach</button><button class=\"tv-chip\" data-tone=\"sun\" type=\"button\" aria-pressed=\"false\" data-tv-close data-src=\"img/zoom-lines.jpg\" data-alt=\"Close up of the tide lines\" data-hint=\"Each line is one day, low tide to high.\">Lines</button></div></div>\n  <div class=\"tv-print__buyblock\"><p class=\"tv-print__kicker\">2027 edition \u00b7 18 x 24 in \u00b7 Unframed</p><h1 class=\"tv-print__title\">Tides at Jacksonville Beach</h1>\n  <button class=\"tv-btn tv-btn--primary tv-print__buy\" type=\"button\"><span class=\"tv-print__buylabel\">Buy \u00b7 $70</span></button><p class=\"tv-buy-note\">Printed to order \u00b7 Free US shipping</p></div>\n </div>\n <div class=\"tv-print-more\">\n  <div class=\"tv-print-collage\" data-n=\"3\" data-shape=\"wide-tall\"><div class=\"tv-print-ph\"><img src=\"img/room-wide.jpg\" alt=\"The print above a wooden desk in a warm room, next to a surfboard\"></div><div class=\"tv-print-ph\"><img src=\"img/room-sunny.jpg\" alt=\"The print above a sunny desk by a window\"></div><div class=\"tv-print-ph\"><img src=\"img/room-clay.jpg\" alt=\"The print on a terracotta wall above a desk\"></div></div>\n  <div class=\"tv-print-label\"><p class=\"tv-print-label__artist\">Aaron Tarver</p><p class=\"tv-print-label__work\">Tides at Jacksonville Beach, 2027 edition</p><p>Print on matte paper</p><p>18 x 24 in, unframed</p><p>Open edition, printed to order</p></div>\n  <section class=\"tv-print-sec\"><h2>The story</h2><p>I grew up at Jacksonville Beach, where fishing, surfing and having fun all revolved around the tides.</p><p>This print tells the future story of 2027. The moon sets the pace. The seasons push the tides to their highs and lows.</p></section>\n  <section class=\"tv-print-sec\"><h2>How to read it</h2><p class=\"tv-print-sec__play\">Full moon or new moon? Scoot your towel back.</p><p>Each line is one day, from low tide to high tide. January starts at the top and the year runs clockwise. A longer line means a bigger swing. Solid discs are full moons. Dashed rings are new moons.</p></section>\n  <section class=\"tv-print-sec\"><h2>The details</h2><dl class=\"tv-print-facts\"><dt>Size</dt><dd>18 x 24 in. Fits a standard 18 x 24 frame.</dd><dt>Frame</dt><dd>Not included.</dd><dt>Shipping</dt><dd>Free anywhere in the US.</dd><dt>Care</dt><dd>Hang it out of direct sun. Florida sun fades everything.</dd><dt>Tide data</dt><dd>NOAA station 8720291, Jacksonville Beach. Actual tides vary with wind and storms. Not for navigation.</dd></dl><p class=\"tv-print-copy\">\u00a9 2026 Aaron Tarver. The print is yours. The image stays mine to reproduce.</p></section>\n </div>\n</div>", "help": "<div class=\"tv-pagehead\"><p class=\"tv-kicker\">Help</p><h1>Good questions.</h1><p class=\"tv-pagehead__line\">Short answers first. Tap any question for the rest.</p></div><div class=\"tv-help\"><nav class=\"tv-help__jump\" aria-label=\"Jump to\"><a href=\"#h-print\">The print</a><a href=\"#h-buying\">Buying</a><a href=\"#h-shipping\">Shipping</a><a href=\"#h-wrong\">If something\u2019s wrong</a><a href=\"#h-next\">What\u2019s next</a></nav><section class=\"tv-help__group\" id=\"h-print\"><p class=\"tv-kicker\">The print</p><ul class=\"tv-help__list\"><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">What\u2019s on it?</p><span class=\"tv-qa__a\">Every tide of 2027</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>All 365 days of tides at Jacksonville Beach, drawn as one ring around the beach. It\u2019s 18 x 24 in, printed on thick matte paper and shipped unframed.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">How do I read it?</p><span class=\"tv-qa__a\">One line, one day</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Each line runs from that day\u2019s low tide to its high tide. A longer line means a bigger swing. January sits at the top, and the year runs clockwise. Solid discs are full moons. Dashed rings are new moons.</p><p>The tides are NOAA\u2019s predictions for station 8720291, the Jacksonville Beach pier. Wind and storms move real tides around, so enjoy it on the wall, not at the boat ramp.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Will it fit my frame?</p><span class=\"tv-qa__a\">Any 18 x 24 frame</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>It fits a standard 18 x 24 in frame, sold at most frame and craft stores. No trimming needed.</p></div></details></li></ul></section><section class=\"tv-help__group\" id=\"h-buying\"><p class=\"tv-kicker\">Buying</p><ul class=\"tv-help__list\"><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">What does it cost?</p><span class=\"tv-qa__a\">$70, shipping free</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Prices are in US dollars. Sales tax, if any, shows at checkout before you pay. Nothing else gets added.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Is checkout safe?</p><span class=\"tv-qa__a\">Yes, it runs on Stripe</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Stripe handles your card, and I never see your card number. Apple Pay and Google Pay work. No account needed.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Can I send it as a gift?</p><span class=\"tv-qa__a\">Yes</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Enter their address at checkout and it ships straight to them. For Christmas, order by December 10.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Can I change or cancel my order?</p><span class=\"tv-qa__a\">Within 12 hours</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Within 12 hours of ordering, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. If it hasn\u2019t gone to print, I\u2019ll change or cancel it and refund you in full. After that, it\u2019s already being made for you.</p></div></details></li></ul></section><section class=\"tv-help__group\" id=\"h-shipping\"><p class=\"tv-kicker\">Shipping</p><ul class=\"tv-help__list\"><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">When will it get here?</p><span class=\"tv-qa__a\">Usually 1 to 2 weeks</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>It\u2019s printed for you within 5 business days, then spends 3 to 8 business days in the mail. You\u2019ll get a tracking link by email when it ships.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Where do you ship?</p><span class=\"tv-qa__a\">Anywhere in the US</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>All 50 states, free. I don\u2019t ship outside the US yet.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">It came rolled. Now what?</p><span class=\"tv-qa__a\">Unroll it and frame it</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>It can go straight into a poster hanger or a frame with plexiglass, right out of the tube.</p><p>For the flattest result, lay it on a hard, flat surface, not carpet, with a few books on top overnight. Then frame it.</p></div></details></li></ul></section><section class=\"tv-help__group\" id=\"h-wrong\"><p class=\"tv-kicker\">If something\u2019s wrong</p><ul class=\"tv-help__list\"><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">It arrived damaged or printed wrong.</p><span class=\"tv-qa__a\">I\u2019ll replace it, free</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Within 30 days of delivery, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a> with a photo. Pick a new print or a full refund. No need to send anything back.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">It never showed up.</p><span class=\"tv-qa__a\">I\u2019ll track it down</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Check your tracking link first. Still nothing 30 days after the expected date? Email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I\u2019ll send a new one or refund you.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Can I return it?</p><span class=\"tv-qa__a\">Only if something\u2019s wrong</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Each print is made just for you, so I can\u2019t take returns for a change of mind. Anything damaged, misprinted or lost is on me. The full policy is in <a href=\"#\">Shipping and returns</a>.</p></div></details></li></ul></section><section class=\"tv-help__group\" id=\"h-next\"><p class=\"tv-kicker\">What\u2019s next</p><ul class=\"tv-help__list\"><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">Will there be more pieces?</p><span class=\"tv-qa__a\">Yes, more art is coming</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>More art is on the way. Some pieces will be prints. Some will be other kinds of art. Another Jacksonville tide piece may or may not happen next year.</p><p>Collectors see each new piece first.</p></div></details></li><li><details class=\"tv-qa\"><summary><p class=\"tv-qa__q\">What\u2019s the collector list?</p><span class=\"tv-qa__a\">Early access to new pieces</span><span class=\"tv-qa__caret\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2.4 4.6 Q7 4.3 11.6 4.6 Q12.6 4.8 12 5.7 L7.9 10.6 Q7 11.6 6.1 10.6 L2 5.7 Q1.4 4.8 2.4 4.6Z\" fill=\"var(--ink)\"></path></svg></span></summary><div class=\"tv-qa__body\"><p>Join with your email and you\u2019ll see each new piece before anyone else. One email per new piece.</p><p>More for collectors is on the way.</p></div></details></li></ul></section><section class=\"tv-askme\" aria-labelledby=\"askme\"><svg class=\"tv-askme__deco\" viewBox=\"0 0 150 150\" aria-hidden=\"true\"><circle cx=\"96\" cy=\"54\" r=\"42\" fill=\"var(--sun)\"></circle><rect x=\"18\" y=\"104\" width=\"110\" height=\"26\" rx=\"13\" fill=\"var(--brand)\"></rect></svg><p class=\"tv-kicker\">Still wondering?</p><h2 id=\"askme\">Ask me.</h2><p>I read every message myself and reply within 48 hours. Have an order number? It\u2019s on your Stripe receipt. Add it and I can help faster.</p><div class=\"tv-askme__ways\"><div class=\"tv-askme__way\"><a class=\"tv-btn tv-btn--primary\" href=\"mailto:hello@tarverart.com\">Email me</a><small>hello@tarverart.com</small></div><div class=\"tv-askme__way\"><a class=\"tv-btn tv-btn--sun\" href=\"https://www.instagram.com/tarver.art/\">Send a DM</a><small>Instagram @tarver.art</small></div></div></section></div>", "ship": "<div class=\"tv-pagehead\"><p class=\"tv-kicker\">Last updated \u00b7 Nov 2026</p><h1>Shipping and returns</h1><p class=\"tv-pagehead__line\">How your print gets to you, and what happens if something goes wrong.</p></div><div class=\"tv-policy\"><section class=\"tv-policy__short\" aria-label=\"In short\"><p class=\"tv-kicker\">In short</p><ul><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>Free shipping anywhere in the US.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>Usually at your door in 1 to 2 weeks.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>Damaged, misprinted or lost? I replace it or refund you.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>No returns for a change of mind. Each print is made to order.</span></li></ul></section><section class=\"tv-policy__sec\"><h2>Shipping</h2><dl class=\"tv-policy__facts\"><dt>Where</dt><dd>All 50 US states. I don\u2019t ship outside the US yet.</dd><dt>Cost</dt><dd>Free. Prices are in US dollars. Sales tax, if any, shows at checkout.</dd><dt>How long</dt><dd>Your order goes to print within 1 business day, after the 12 hour window to make changes. It\u2019s printed within 5 more. It arrives 3 to 8 business days after it ships.</dd><dt>How</dt><dd>Rolled in a tube, sent by USPS, UPS or FedEx. My print partner, Printful, prints and ships it.</dd><dt>Tracking</dt><dd>A tracking link comes by email when it ships.</dd><dt>Holidays</dt><dd>For Christmas, order by December 10.</dd></dl><p>Please check your address at checkout. If a print comes back because of a wrong address, I can send it again for the cost of shipping.</p></section><section class=\"tv-policy__sec\"><h2>Changes and cancellations</h2><p>Within 12 hours of ordering, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. If it hasn\u2019t gone to print, I\u2019ll change or cancel it and refund you in full. Once printing starts, it can\u2019t be canceled.</p></section><section class=\"tv-policy__sec\"><h2>Damaged, misprinted or lost</h2><p>Within 30 days of delivery, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a> with a photo. You choose a new print or a full refund. Nothing to send back.</p><p>If it hasn\u2019t arrived 30 days after the expected date, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I\u2019ll send a new one or refund you.</p></section><section class=\"tv-policy__sec\"><h2>Returns</h2><p>Each print is made for you after you order, so I can\u2019t accept returns or exchanges for a change of mind. Small color differences between screens and paper aren\u2019t defects.</p></section><section class=\"tv-policy__sec\"><h2>Refunds</h2><p>Refunds go back to the card or wallet you paid with. Most banks show them within 5 to 10 business days.</p></section><div class=\"tv-policy__end\"><strong>Questions?</strong>Email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I answer every message myself, within 48 hours.</div></div>", "privacy": "<div class=\"tv-pagehead\"><p class=\"tv-kicker\">Last updated \u00b7 Nov 2026</p><h1>Privacy</h1><p class=\"tv-pagehead__line\">What I collect, why, and who else sees it.</p></div><div class=\"tv-policy\"><section class=\"tv-policy__short\" aria-label=\"In short\"><p class=\"tv-kicker\">In short</p><ul><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>I collect only what I need to make and ship your print.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>I never see or store your card number. Stripe does.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>I never sell or rent your information.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>Ask me to see or delete it any time.</span></li></ul></section><section class=\"tv-policy__sec\"><h2>Who I am</h2><p>This site is run by Aaron Tarver, an artist in Jacksonville, Florida. \u201cI\u201d means me.</p></section><section class=\"tv-policy__sec\"><h2>What I collect</h2><ul><li><b>When you buy:</b> your name, email, shipping address and phone number if you give one. Stripe collects these at checkout.</li><li><b>When you join the collector list:</b> your email.</li><li><b>When you visit:</b> basic visit data, like pages viewed, device type and the ad or link that brought you, through cookies.</li></ul></section><section class=\"tv-policy__sec\"><h2>How I use it</h2><ul><li>To make, ship and support your order.</li><li>To email you about new pieces, if you joined the list.</li><li>To learn which ads and links work.</li></ul></section><section class=\"tv-policy__sec\"><h2>Who else sees it</h2><p>Only the services that run this shop, each under its own privacy policy:</p><ul><li><b>Stripe</b> takes your payment.</li><li><b>Printful</b> prints and ships your order, so it gets your name and address.</li><li><b>Kit</b> stores the collector list and sends its emails.</li><li><b>Meta</b> measures my Facebook and Instagram ads through its pixel.</li><li><b>Cloudflare</b> hosts this site.</li></ul><p>No one else gets your information. I don\u2019t sell or rent it.</p></section><section class=\"tv-policy__sec\"><h2>Cookies</h2><p>The Meta pixel uses cookies to measure ads. You can block cookies in your browser and the site still works. You can also limit ads in your Facebook or Instagram ad settings.</p></section><section class=\"tv-policy__sec\"><h2>Emails</h2><p>Every collector list email has an unsubscribe link. Order emails, like your receipt and tracking, still come.</p></section><section class=\"tv-policy__sec\"><h2>How long I keep it</h2><p>Order records stay as long as tax law requires. Your collector list email stays until you unsubscribe.</p></section><section class=\"tv-policy__sec\"><h2>Your choices</h2><p>To see, correct or delete your information, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I\u2019ll take care of it within 30 days.</p></section><section class=\"tv-policy__sec\"><h2>Kids</h2><p>Kids are welcome to look at the art. Buying and joining the collector list are for adults. I don\u2019t knowingly collect personal information from children under 13. If you think I have, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a> and I\u2019ll delete it.</p></section><section class=\"tv-policy__sec\"><h2>Changes</h2><p>If this policy changes, the date at the top changes too.</p></section><div class=\"tv-policy__end\"><strong>Questions?</strong>Email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I answer every message myself, within 48 hours.</div></div>", "terms": "<div class=\"tv-pagehead\"><p class=\"tv-kicker\">Last updated \u00b7 Nov 2026</p><h1>Terms</h1><p class=\"tv-pagehead__line\">The deal between us when you buy a print.</p></div><div class=\"tv-policy\"><section class=\"tv-policy__short\" aria-label=\"In short\"><p class=\"tv-kicker\">In short</p><ul><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>You\u2019re buying from Aaron Tarver, an artist in Jacksonville, Florida, United States.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>Prices are in US dollars. US shipping is free.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>The print is yours. The art and the right to copy it stay mine.</span></li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg><span>The tide lines are art, not a tide table.</span></li></ul></section><section class=\"tv-policy__sec\"><h2>Who you\u2019re buying from</h2><p>Aaron Tarver, a sole proprietor.<br>Jacksonville, Florida<br>Email <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a></p></section><section class=\"tv-policy__sec\"><h2>Orders and payment</h2><p>You must be 18 or older to buy, or have a parent or guardian buy for you. Every price is in US dollars. Sales tax, if any, shows at checkout. Stripe processes your payment. Your order is confirmed when payment goes through and Stripe emails your receipt.</p><p>If I can\u2019t fill an order, for example because of a pricing mistake, I\u2019ll cancel it and refund you in full.</p></section><section class=\"tv-policy__sec\"><h2>Made to order</h2><p>Each print is made after you buy it, on thick matte paper. Screens and paper show color a little differently, so small color differences aren\u2019t defects.</p></section><section class=\"tv-policy__sec\"><h2>Shipping, cancellations and returns</h2><p>See <a href=\"#\">Shipping and returns</a>. It\u2019s part of these terms. I ship only within the United States.</p></section><section class=\"tv-policy__sec\"><h2>The art</h2><p>The art is \u00a9 Aaron Tarver. Your print is yours to hang, give away or sell as a print. Please don\u2019t copy, scan or reproduce the art, or put it on anything else, without my written permission. Photos of it on your wall are welcome. Tag <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>.</p></section><section class=\"tv-policy__sec\"><h2>Tide data</h2><p>The tides come from NOAA\u2019s predictions for station 8720291, Jacksonville Beach. Real tides change with wind and weather. The print is art. Don\u2019t use it for boating, fishing, navigation or safety.</p></section><section class=\"tv-policy__sec\"><h2>Limits</h2><p>I stand behind every print as described on this site. Beyond that, my responsibility for any order is limited to what you paid for it, as far as the law allows.</p></section><section class=\"tv-policy__sec\"><h2>Law</h2><p>Florida law governs these terms. Any dispute goes to the courts of Duval County, Florida.</p></section><section class=\"tv-policy__sec\"><h2>Changes</h2><p>I may update these terms. The version posted on the day you order applies to that order.</p></section><div class=\"tv-policy__end\"><strong>Questions?</strong>Email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>. I answer every message myself, within 48 hours.</div></div>", "thanks": "<div class=\"tv-thanks\"><div class=\"tv-thanks__scene\"></div><div class=\"tv-thanks__head\"><p class=\"tv-kicker\">Order confirmed</p><h1>It\u2019s yours.</h1><p>Thank you. My art is going on your wall, and that means a lot.</p></div><p class=\"tv-kicker\" style=\"margin:0 0 var(--space-3) var(--space-1)\">What happens next</p><ol class=\"tv-steps\"><li class=\"tv-step\"><span class=\"tv-step__mark\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"var(--sun)\"></circle><rect x=\"5.6\" y=\"11.2\" width=\"7\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(45 9.1 13)\" fill=\"var(--brand)\"></rect><rect x=\"8.6\" y=\"10.2\" width=\"11\" height=\"3.6\" rx=\"1.8\" transform=\"rotate(-50 14.1 12)\" fill=\"var(--ink-block)\"></rect></svg></span><div><p class=\"tv-kicker\">Today</p><p>Your receipt is in your email<span>From Stripe, with your order details.</span></p></div></li><li class=\"tv-step\"><span class=\"tv-step__mark\"><svg viewBox=\"0 0 40 48\" aria-hidden=\"true\"><path fill=\"var(--ink-block)\" d=\"M11.2,4 L28.8,4 A3.1 3.1 0 0 1 30.4,9.8 C27.8,11.3 26,18.5 26,22.8 L26,25.2 C26,29.5 28.5,36.1 32.2,38.2 A3.1 3.1 0 0 1 30.7,44 L9.3,44 A3.1 3.1 0 0 1 7.8,38.2 C11.5,36.1 14,29.5 14,25.2 L14,22.8 C14,18.5 12.2,11.3 9.6,9.8 A3.1 3.1 0 0 1 11.2,4 Z\"></path><path fill=\"var(--sun)\" d=\"M19.1,30.9 A0.9 0.9 0 0 1 20.9,30.9 C20.9,33.4 22.8,36.8 25.5,38.3 A0.9 0.9 0 0 1 25.1,40 L14.9,40 A0.9 0.9 0 0 1 14.5,38.3 C17.2,36.8 19.1,33.4 19.1,30.9 Z\"></path><rect x=\"7\" y=\"1\" width=\"26\" height=\"4.6\" rx=\"2.3\" fill=\"var(--brand)\"></rect><rect x=\"7\" y=\"42.4\" width=\"26\" height=\"4.6\" rx=\"2.3\" fill=\"var(--brand)\"></rect></svg></span><div><p class=\"tv-kicker\">Within 5 business days</p><p>Printed and shipped<span>A tracking link comes by email.</span></p></div></li><li class=\"tv-step\"><span class=\"tv-step__mark\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 22.5c-.7 0-1.2-.4-1.6-1C7.7 17.4 4.5 13.6 4.5 9.6a7.5 7.5 0 0 1 15 0c0 4-3.2 7.8-5.9 11.9-.4.6-.9 1-1.6 1Z\" fill=\"var(--brand)\"></path><circle cx=\"12\" cy=\"9.6\" r=\"3\" fill=\"var(--sun)\"></circle></svg></span><div><p class=\"tv-kicker\">Usually 1 to 2 weeks</p><p>At your door<span>Rolled in a tube. Unroll it and lay it flat overnight.</span></p></div></li></ol><section class=\"tv-thanks__next\"><p class=\"tv-kicker\">Coming soon</p><h2>More pieces are on the way.</h2><p>I\u2019m working on what\u2019s next. Check back soon, or join the collector list to see new pieces first.</p><div class=\"tv-join\"><form class=\"tv-join__form\" novalidate=\"\"><label class=\"tv-join__label\" for=\"fj2\">Join the collector list</label><p class=\"tv-join__hint\" id=\"fj2h\">New pieces first. One email per new piece.</p><input class=\"tv-join__input\" id=\"fj2\" type=\"email\" name=\"email\" autocomplete=\"email\" inputmode=\"email\" placeholder=\"you@email.com\" aria-describedby=\"fj2h\"><button class=\"tv-btn tv-btn--secondary tv-join__btn\" type=\"submit\"><span class=\"tv-join__btnlabel\">Join</span><span class=\"tv-join__dots\" aria-hidden=\"true\"><i></i><i></i><i></i></span></button></form></div></section><p class=\"tv-thanks__help\">Questions about your order? See <a href=\"#\">Help</a>, email me at <a href=\"mailto:hello@tarverart.com\">hello@tarverart.com</a> or DM me on Instagram at <a href=\"https://www.instagram.com/tarver.art/\">@tarver.art</a>.</p></div>"};
+
+(function(){
+var T=Tarver.characters,by={};T.CAST.forEach(function(c){by[c.id]=c});
+var EMAIL='hello@tarverart.com';
+var PEND=function(t){return '<span class="rv-pending">'+t+'</span>'};
+var ICON={
+ pin:'<svg class="tv-icon tv-ico" viewBox="0 0 24 24" aria-hidden="true"><path class="ib" d="M13.2,21.1 A1.5 1.5 0 0 1 10.8,21.1 C7.3,15.9 4.5,15.5 4.5,9.9 A7.5 7.5 0 0 1 19.5,9.9 C19.5,15.5 16.7,15.9 13.2,21.1 Z"/><circle class="is" cx="12" cy="9.6" r="3"/></svg>',
+ check:'<svg class="tv-icon tv-ico" viewBox="0 0 24 24" aria-hidden="true"><rect class="is" x="3" y="3" width="18" height="18" rx="9"/><g transform="translate(-0.3 -0.5)"><path class="ik" d="M11.9,16.7 L17.8,10.1 A1.4 1.4 0 0 0 15.7,8.2 L9.8,14.9 A1.4 1.4 0 0 0 11.9,16.7 Z"/><path class="ib" d="M6.8,13.7 L9.9,16.8 A1.4 1.4 0 0 0 11.9,14.8 L8.7,11.7 A1.4 1.4 0 0 0 6.8,13.7 Z"/></g></svg>',
+ help:'<svg class="tv-icon tv-ico" viewBox="0 0 24 24" aria-hidden="true"><circle class="is" cx="12" cy="12" r="9"/><path class="ln ik" d="M9.4 9.4a2.7 2.7 0 1 1 3.7 2.5c-.8.35-1.1.9-1.1 1.7v.5"/><circle class="ib" cx="12" cy="17.3" r="1.7"/></svg>',
+ user:'<svg class="tv-icon tv-ico" viewBox="0 0 24 24" aria-hidden="true"><circle class="ip" cx="12" cy="8" r="4"/><path class="ib r" d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>',
+ heart:'<svg class="tv-icon tv-ico" viewBox="0 0 24 24" aria-hidden="true"><path class="ib r" d="M12 20S3.5 15 3.5 9A4.7 4.7 0 0 1 12 6.8 4.7 4.7 0 0 1 20.5 9C20.5 15 12 20 12 20z"/><circle class="is" cx="17.5" cy="4.5" r="2"/></svg>'
+};
+var HEART='<svg class="tv-buyrx__heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 15.2 3 9A4.9 4.9 0 0 1 12 6.6 4.9 4.9 0 0 1 21 9C21 15.2 12 20.5 12 20.5z" fill="var(--brand)"/></svg>';
+var frame=document.getElementById('site'),uid=0;
+
+/* ---------- review state ---------- */
+var S={page:'home',force:'auto',rm:false,sky:'clock',visit:null};
+var NAMES={A:'The lean',B:'The balance beam',C:'The umbrella drop',D:'The family'};
+var realMM=window.matchMedia.bind(window);
+function fakeMM(q){return {matches:true,media:q,onchange:null,addListener:function(){},removeListener:function(){},addEventListener:function(){},removeEventListener:function(){},dispatchEvent:function(){return false}}}
+window.matchMedia=function(q){if(S.rm&&/reduced-motion/.test(q))return fakeMM(q);return realMM(q)};
+function newVisit(){var e;if(S.force==='auto')e=T.nextEntrance();else e=T.ENTRANCES.filter(function(x){return x.key===S.force})[0];
+ S.visit={entrance:e,played:false,seenAbout:false,pages:0}}
+
+/* ---------- shared chrome ---------- */
+function headerHTML(cur,e){var L=[{label:'About',icon:'user',current:cur==='about'},{label:'Help',icon:'help',current:cur==='help'}];return '<div class="tv-site--launch">'+T.headerHTML(isPhone()?1:0,e.beam?1:0,L)+'</div>'}
+function joinForm(){var id='j'+(uid++);return '<div class="tv-join"><form class="tv-join__form" novalidate><label class="tv-join__label" for="'+id+'">Join the collector list</label><p class="tv-join__hint" id="'+id+'h">New pieces first. One email per new piece.</p><input class="tv-join__input" id="'+id+'" type="email" name="email" autocomplete="email" inputmode="email" placeholder="you@email.com" aria-describedby="'+id+'h"><button class="tv-btn tv-btn--secondary tv-join__btn" type="submit"><span class="tv-join__btnlabel">Join</span><span class="tv-join__dots" aria-hidden="true"><i></i><i></i><i></i></span></button></form></div>'}
+function footer(cur,noJoin){var c=function(k){return cur===k?' aria-current="page"':''};
+ return '<footer class="tv-site-footer"><div class="tv-site-footer__inner"><div class="tv-site-footer__about"><a class="tv-site-footer__logo" href="#" data-go="home" aria-label="Tarver, home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="23" y="18" width="18" height="42" rx="6" fill="currentColor"/><rect x="4" y="6" width="56" height="20" rx="7" fill="var(--brand)"/><circle cx="51" cy="49" r="9.5" fill="var(--sun)"/></svg><span class="tv-site-footer__word">Tarver</span></a><p class="tv-site-footer__tag">Art that makes you smile.</p><nav class="tv-site-footer__links" aria-label="More"><a class="tv-site-footer__pill" href="#" data-go="about"'+c('about')+'>'+ICON.user+'About</a><a class="tv-site-footer__pill" href="#" data-go="help"'+c('help')+'>'+ICON.help+'Help</a></nav><p class="tv-site-footer__contact"><span>Email: <a class="tv-link" href="mailto:'+EMAIL+'">'+EMAIL+'</a></span><span>Instagram: <a class="tv-link" href="https://www.instagram.com/tarver.art/">@tarver.art</a></span></p></div>'+(noJoin?'':joinForm())+'<div class="tv-site-footer__legal"><span><a href="#" data-go="ship"'+c('ship')+'>Shipping and returns</a> · <a href="#" data-go="privacy"'+c('privacy')+'>Privacy</a> · <a href="#" data-go="terms"'+c('terms')+'>Terms</a></span><span>© 2026 Aaron Tarver</span></div></div></footer>'}
+function isPhone(){return frame.getAttribute('data-w')==='phone'}
+
+/* ---------- walk-in ---------- */
+function still(e,hd){var mm=window.matchMedia;window.matchMedia=function(q){return /reduced-motion/.test(q)?fakeMM(q):mm.call(window,q)};try{e.make(hd).play()}finally{window.matchMedia=mm}}
+function headerEntrance(){var v=S.visit;if(S.page==='about'||v.seenAbout)return T.ENTRANCES[3];return v.entrance}
+function runWalkIn(hd){var v=S.visit,e=headerEntrance(),live=false;
+ if(S.page==='about'&&!v.seenAbout){live=true;v.seenAbout=true;v.played=true}
+ else if(!v.played){live=true;v.played=true}
+ try{if(live&&!T.RM())e.make(hd).play();else still(e,hd)}catch(err){console.warn(err)}
+ return {e:e,live:live}}
+
+/* ---------- Buy ---------- */
+function buyReact(btn,mode){
+ if(T.RM())return 0;
+ var w=btn.parentElement;if(!w.classList.contains('tv-buyrx')){w=document.createElement('div');w.className='tv-buyrx';btn.parentNode.insertBefore(w,btn);w.appendChild(btn);w.insertAdjacentHTML('afterbegin','<div class="tv-buyrx__stage" aria-hidden="true"></div>')}
+ var st=w.querySelector('.tv-buyrx__stage'),ids=mode==='family'?['aaron','rachel']:['aaron'];
+ st.innerHTML='<div class="tv-buyrx__crew" data-who="'+mode+'">'+ids.map(function(i){return T.svgOf(by[i],'front')}).join('')+'</div>'+HEART+'<i class="tv-buyrx__spark"></i><i class="tv-buyrx__spark"></i><i class="tv-buyrx__spark"></i>';
+ var crew=st.querySelector('.tv-buyrx__crew'),sv=crew.querySelectorAll('svg'),E=T.EASE;
+ crew.animate([{transform:'translateY(110%)'},{transform:'translateY(0)'}],{duration:300,easing:E.spring,fill:'forwards'});
+ function arm(svg,part,deg,delay){var a=svg.querySelector('.p-'+part);if(a)a.animate([{transform:'rotate(0deg)'},{transform:'rotate('+deg+'deg)'}],{duration:260,delay:delay,easing:E.spring,fill:'forwards'})}
+ if(mode==='family'){arm(sv[0],'armR',-132,200);arm(sv[1],'armL',132,200);arm(sv[0],'armL',8,200);arm(sv[1],'armR',-8,200)}
+ else{arm(sv[0],'armR',-158,200);arm(sv[0],'armL',158,230)}
+ var h=st.querySelector('.tv-buyrx__heart');h.style.top=mode==='family'?'22px':'0px';
+ h.animate([{transform:'scale(0)',opacity:0},{transform:'scale(1.25)',opacity:1,offset:.6},{transform:'scale(1)',opacity:1}],{duration:320,delay:440,easing:E.out,fill:'forwards'});
+ var D=[[-22,-6],[22,-6],[0,-16]];st.querySelectorAll('.tv-buyrx__spark').forEach(function(s,i){s.style.top=(mode==='family'?36:14)+'px';s.animate([{transform:'translate(0,0) scale(0)',opacity:0},{transform:'translate('+D[i][0]*.6+'px,'+D[i][1]*.6+'px) scale(1)',opacity:1,offset:.5},{transform:'translate('+D[i][0]+'px,'+D[i][1]+'px) scale(.4)',opacity:0}],{duration:420,delay:480,easing:E.out,fill:'forwards'})});
+ return 760}
+function checkout(btn){var mode=S.visit.seenAbout?'family':'solo';
+ if(Tarver.printListing)Tarver.printListing.loading(btn,true);buyReact(btn,mode);
+ setTimeout(function(){var o=document.createElement('div');o.className='rv-co';o.innerHTML='<div class="rv-co__card" role="dialog" aria-label="Checkout"><p class="rv-co__tag">Stripe checkout · stand-in for review</p><h3>Tides at Jacksonville Beach</h3><p>2027 edition · 18 x 24 in</p><div class="rv-co__row"><span>Print</span><span>$70.00</span></div><div class="rv-co__row"><span>Shipping</span><span>Free</span></div><div class="rv-co__row"><span>Sales tax</span><span>Set by Stripe</span></div><button class="rv-co__pay" type="button">Pay</button><button class="rv-co__back" type="button">Back to Tarver</button></div>';
+  document.body.appendChild(o);
+  o.querySelector('.rv-co__pay').addEventListener('click',function(){o.remove();go('thanks')});
+  o.querySelector('.rv-co__back').addEventListener('click',function(){o.remove();btn.__co=0;if(Tarver.printListing)Tarver.printListing.loading(btn,false);var s=frame.querySelector('.tv-buyrx__stage');if(s)s.innerHTML=''});
+ },1500)}
+
+/* ---------- About ---------- */
+/* About photo: swap a few times a year by editing only this block. Photo is 4:3 landscape, about 1400 x 1050. */
+var ABOUT={
+ photo:'img/about-zion.jpg',
+ alt:'Aaron and Rachel Tarver smiling in front of red cliffs in Springdale, Utah, at the edge of Zion National Park',
+ greeting:'Greetings from Zion',
+ stamp:'ZION',
+ postmark:'SPRINGDALE UT',postDay:'MAY 14',postYear:'2026',
+ place:'Springdale, Utah, at the edge of Zion',date:'May 14, 2026',
+ blurb:'We’ve called Jacksonville, Florida home almost our entire lives. Aaron is a Development Manager with a finance and engineering background who loves turning data into art. Rachel works in commercial real estate as an Account Specialist and turns art into meaning. Together we travel the world and make art inspired by the places we’ve been.'
+};
+var EX=[
+ {id:'aaron',name:'Aaron Tarver',role:'Artist',line:'Turns data into art.',move:'juggle',bg:'pier'},
+ {id:'rachel',name:'Rachel Tarver',role:'Artist',line:'Turns art into meaning.',move:'butterfly',prep:'photographer',vb:'-30 -32 190 230',bg:'garden'},
+ {id:'sky',name:'Sky',role:'White cat, blue eyes',line:'Head of quality control.',cat:1,bg:'night'},
+ {id:'zara',name:'Zara',role:'Ragdoll',line:'Naps on every proof.',cat:1,bg:'window'}
+];
+var V='viewBox="0 0 200 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true"';
+function rays(cx,cy,r1,r2,n,cls){var s='<g class="'+(cls||'')+'" fill="var(--sun)">';for(var i=0;i<n;i++){var a=360/n*i,len=(i%2?r2*.72:r2);s+='<rect x="'+(cx-3.5)+'" y="'+(cy-r1-len)+'" width="7" height="'+len+'" rx="3.5" transform="rotate('+a+' '+cx+' '+cy+')"/>'}return s+'</g>'}
+var BG={
+ pier:'<svg '+V+'><rect width="200" height="260" fill="var(--brand-tint)"/><rect width="200" height="96" fill="#fbe7d9"/><rect x="16" y="70" width="58" height="13" rx="6.5" fill="var(--surface-card)"/><rect x="128" y="104" width="46" height="11" rx="5.5" fill="var(--surface-card)"/>'
+  +'<g class="bg-sun">'+rays(64,166,40,16,10)+'<circle cx="64" cy="166" r="34" fill="var(--sun)"/></g>'
+  +'<rect y="164" width="200" height="96" fill="var(--teal)"/><rect x="34" y="180" width="44" height="6" rx="3" fill="var(--sun)"/><rect x="48" y="194" width="22" height="5" rx="2.5" fill="var(--sun)" opacity=".8"/><rect x="18" y="210" width="30" height="5" rx="2.5" fill="var(--surface-card)" opacity=".5"/>'
+  +'<g fill="var(--ink-block)"><rect x="112" y="146" width="96" height="9" rx="3"/><rect x="122" y="150" width="6" height="56" rx="2"/><rect x="146" y="150" width="6" height="56" rx="2"/><rect x="170" y="150" width="6" height="56" rx="2"/><rect x="194" y="150" width="6" height="56" rx="2"/><rect x="118" y="134" width="4" height="13" rx="2"/><rect x="190" y="134" width="4" height="13" rx="2"/><rect x="118" y="133" width="80" height="4" rx="2"/></g>'
+  +'<path d="M182 134 L198 104" stroke="var(--ink-block)" stroke-width="2.5" stroke-linecap="round"/><path d="M198 104 L198 180" stroke="var(--ink-block)" stroke-width="1" opacity=".55"/></svg>',
+ garden:'<svg '+V+'><rect width="200" height="260" fill="var(--teal-tint)"/><circle cx="160" cy="70" r="22" fill="var(--surface-card)"/>'
+  +'<g fill="var(--teal)" opacity=".38"><circle cx="0" cy="200" r="44"/><circle cx="66" cy="192" r="40"/><circle cx="134" cy="196" r="42"/><circle cx="200" cy="190" r="44"/></g>'
+  +'<g stroke="var(--ink-block)" stroke-width="3" stroke-linecap="round"><path d="M28 210 L28 120"/><path d="M62 210 L62 146"/><path d="M146 210 L146 128"/><path d="M178 210 L178 152"/></g>'
+  +'<g class="bg-flowers"><g class="fl" style="transform-origin:28px 120px"><circle cx="28" cy="120" r="13" fill="var(--sun)"/><circle cx="28" cy="120" r="5" fill="var(--ink-block)"/></g><g class="fl" style="transform-origin:62px 146px"><circle cx="62" cy="146" r="11" fill="var(--plum)"/><circle cx="62" cy="146" r="4.5" fill="var(--sun)"/></g><g class="fl" style="transform-origin:146px 128px"><circle cx="146" cy="128" r="12" fill="var(--surface-card)"/><circle cx="146" cy="128" r="5" fill="var(--sun)"/></g><g class="fl" style="transform-origin:178px 152px"><circle cx="178" cy="152" r="11" fill="var(--sun)"/><circle cx="178" cy="152" r="4.5" fill="var(--plum)"/></g></g>'
+  +'<g fill="var(--teal)"><circle cx="-6" cy="242" r="40"/><circle cx="56" cy="236" r="36"/><circle cx="146" cy="238" r="38"/><circle cx="206" cy="232" r="40"/><rect y="236" width="200" height="24"/></g></svg>',
+ night:'<svg '+V+'><rect width="200" height="260" fill="#1D2A3A"/><circle cx="150" cy="78" r="21" fill="#fbe7d9"/><circle cx="160" cy="71" r="18" fill="#1D2A3A"/>'
+  +'<g class="bg-stars" fill="var(--surface-card)"><circle class="st" cx="24" cy="54" r="2"/><circle class="st" cx="62" cy="92" r="1.6"/><circle class="st" cx="104" cy="44" r="2.2"/><circle class="st" cx="34" cy="138" r="1.5"/><circle class="st" cx="182" cy="128" r="1.8"/><circle class="st" cx="120" cy="112" r="1.4"/><circle class="st" cx="84" cy="160" r="1.6"/><circle class="st" cx="186" cy="38" r="1.5"/>'
+  +'<path class="st" d="M70 30 l2.4 6.6 6.6 2.4 -6.6 2.4 -2.4 6.6 -2.4 -6.6 -6.6 -2.4 6.6 -2.4z" fill="var(--sun)"/><path class="st" d="M174 176 l1.8 4.8 4.8 1.8 -4.8 1.8 -1.8 4.8 -1.8 -4.8 -4.8 -1.8 4.8 -1.8z" fill="var(--sun)"/></g>'
+  +'<defs><linearGradient id="SHOOTID" x1="0" x2="1"><stop offset="0" stop-color="#fbe7d9" stop-opacity="0"/><stop offset="1" stop-color="#fbe7d9"/></linearGradient></defs>'
+  +'<g class="bg-shoot" opacity="0"><rect x="-56" y="-1.5" width="56" height="3" rx="1.5" fill="url(#SHOOTID)"/><circle cx="0" cy="0" r="3" fill="var(--surface-card)"/></g>'
+  +'<rect y="236" width="200" height="24" fill="#16202C"/></svg>',
+ window:'<svg '+V+'><rect width="200" height="260" fill="var(--brand-tint)"/>'
+  +'<rect x="22" y="44" width="84" height="100" rx="12" fill="var(--ink-block)"/><rect x="30" y="52" width="68" height="84" rx="6" fill="var(--teal-tint)"/><circle cx="82" cy="72" r="12" fill="var(--sun)"/><rect x="61" y="52" width="6" height="84" fill="var(--ink-block)"/><rect x="30" y="91" width="68" height="6" fill="var(--ink-block)"/><rect x="16" y="140" width="96" height="9" rx="4.5" fill="var(--ink-block)"/>'
+  +'<polygon class="bg-beam" points="30,149 106,149 194,260 70,260" fill="var(--sun)" opacity=".34"/>'
+  +'<g fill="var(--surface-card)" class="bg-motes"><circle cx="78" cy="176" r="1.6"/><circle cx="104" cy="198" r="1.3"/><circle cx="92" cy="220" r="1.8"/><circle cx="124" cy="186" r="1.2"/></g>'
+  +'<rect x="144" y="40" width="34" height="44" rx="4" fill="var(--surface-card)"/><rect x="150" y="46" width="22" height="22" rx="11" fill="var(--teal)"/><rect x="150" y="72" width="22" height="4" rx="2" fill="var(--hairline)"/>'
+  +'<rect y="238" width="200" height="22" fill="var(--surface-200)"/></svg>'
+};
+function heroHTML(){var pm='pm'+(uid++);return '<section class="tv-about__hero"><div><figure class="tv-pcard"><span class="tv-pcard__under" aria-hidden="true"></span><div class="tv-pcard__front"><img class="tv-pcard__photo" src="'+ABOUT.photo+'" alt="'+ABOUT.alt+'" width="1400" height="1050"><div class="tv-pcard__foot"><span class="tv-pcard__greet">'+ABOUT.greeting+'</span><svg class="tv-pcard__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="23" y="18" width="18" height="42" rx="6" fill="var(--ink-block)"/><rect x="4" y="6" width="56" height="20" rx="7" fill="var(--brand)"/><circle cx="51" cy="49" r="9.5" fill="var(--sun)"/></svg></div></div><svg class="tv-pcard__stamp" viewBox="0 0 80 96" aria-hidden="true"><g fill="var(--surface-card)"><rect x="4" y="4" width="72" height="88"/><circle cx="4" cy="4" r="4"/><circle cx="4" cy="92" r="4"/><circle cx="12" cy="4" r="4"/><circle cx="12" cy="92" r="4"/><circle cx="20" cy="4" r="4"/><circle cx="20" cy="92" r="4"/><circle cx="28" cy="4" r="4"/><circle cx="28" cy="92" r="4"/><circle cx="36" cy="4" r="4"/><circle cx="36" cy="92" r="4"/><circle cx="44" cy="4" r="4"/><circle cx="44" cy="92" r="4"/><circle cx="52" cy="4" r="4"/><circle cx="52" cy="92" r="4"/><circle cx="60" cy="4" r="4"/><circle cx="60" cy="92" r="4"/><circle cx="68" cy="4" r="4"/><circle cx="68" cy="92" r="4"/><circle cx="76" cy="4" r="4"/><circle cx="76" cy="92" r="4"/><circle cx="4" cy="4" r="4"/><circle cx="76" cy="4" r="4"/><circle cx="4" cy="12" r="4"/><circle cx="76" cy="12" r="4"/><circle cx="4" cy="20" r="4"/><circle cx="76" cy="20" r="4"/><circle cx="4" cy="28" r="4"/><circle cx="76" cy="28" r="4"/><circle cx="4" cy="36" r="4"/><circle cx="76" cy="36" r="4"/><circle cx="4" cy="44" r="4"/><circle cx="76" cy="44" r="4"/><circle cx="4" cy="52" r="4"/><circle cx="76" cy="52" r="4"/><circle cx="4" cy="60" r="4"/><circle cx="76" cy="60" r="4"/><circle cx="4" cy="68" r="4"/><circle cx="76" cy="68" r="4"/><circle cx="4" cy="76" r="4"/><circle cx="76" cy="76" r="4"/><circle cx="4" cy="84" r="4"/><circle cx="76" cy="84" r="4"/><circle cx="4" cy="92" r="4"/><circle cx="76" cy="92" r="4"/></g><rect x="11" y="11" width="58" height="56" rx="3" fill="var(--teal-tint)"/><circle cx="52" cy="28" r="8" fill="var(--sun)"/><path d="M11 67 V44 L18 40 L27 39 L32 32 L46 33 L52 40 L60 41 L69 45 V67 Z" fill="#e8742f"/><path d="M11 58 Q24 54 40 58 T69 57 V67 H11 Z" fill="var(--ink-block)"/><rect x="11" y="11" width="58" height="56" rx="3" fill="none" stroke="var(--ink-block)" stroke-width="1.5"/><text x="40" y="81" text-anchor="middle" style="font:700 10px var(--font-caps);letter-spacing:.14em" fill="var(--ink-block)">'+ABOUT.stamp+'</text></svg>'+'<svg class="tv-pcard__post" viewBox="0 0 200 84" aria-hidden="true"><defs><path id="'+pm+'" d="M123 44 a27 27 0 1 1 54 0"/></defs><g stroke-width="2.2" stroke-linecap="round"><path d="M4 26 q10 -7 20 0 t20 0 t20 0 t20 0 t20 0"/><path d="M4 40 q10 -7 20 0 t20 0 t20 0 t20 0 t20 0"/><path d="M4 54 q10 -7 20 0 t20 0 t20 0 t20 0 t20 0"/></g><circle cx="150" cy="44" r="37" stroke-width="2.4"/><text style="font-size:7.5px;letter-spacing:.1em"><textPath href="#'+pm+'" startOffset="50%" text-anchor="middle">'+ABOUT.postmark+'</textPath></text><path d="M128 53 H172" stroke-width="1.2"/><text class="pm-big" x="150" y="50" text-anchor="middle">'+ABOUT.postDay+'</text><text x="150" y="65" text-anchor="middle">'+ABOUT.postYear+'</text></svg></figure>'
+ +'<p class="tv-about__label"><b>Aaron and Rachel Tarver</b><i>'+ABOUT.place+'</i>Photograph, '+ABOUT.date+'</p></div>'
+ +'<div class="tv-about__intro"><p class="tv-kicker">About</p><h1>Hi, we’re the Tarvers.</h1><p class="tv-about__blurb">'+ABOUT.blurb+'</p></div></section>'}
+function aboutHTML(){
+ var ex='<section class="tv-about__sec"><p class="tv-kicker">Now showing</p><h2>The whole crew.</h2><p class="tv-about__line">Tap anyone to see them again.</p><ul class="tv-exhibits">'+EX.map(function(e,i){
+  var bg=BG[e.bg].replace(/SHOOTID/g,'shoot'+(uid++));
+  return '<li class="tv-exhibit"'+(e.cat?' data-cat':'')+' data-k="'+e.id+'" data-i="'+i+'"><button class="tv-exhibit__stage" type="button" aria-label="'+e.name+', play again"><span class="tv-exhibit__bg">'+bg+'</span><span class="tv-exhibit__plinth"></span>'+(e.id==='zara'?'<span class="tv-exhibit__cushion"></span>':'')+'<span class="tv-exhibit__fig"></span>'+(e.id==='sky'?'<span class="tv-exhibit__run"></span>':'')+(e.id==='zara'?'<span class="tv-exhibit__zz"><i>z</i><i>z</i><i>z</i></span>':'')+'</button><div class="tv-exhibit__label"><b>'+e.name+'</b><i>'+e.role+'</i>'+e.line+'</div></li>'}).join('')+'</ul></section>';
+ var pr=[[ICON.pin,'Jacksonville is home.','Every piece starts with a place we know.'],[ICON.check,'I see every piece first.','I order a proof and check it in daylight before it goes on sale.'],[ICON.help,'A real person answers.','Email '+EMAIL+' or DM @tarver.art. I reply within 48 hours.'],[ICON.heart,'If it’s wrong, I fix it.','Damaged or misprinted? A new print or a full refund, free.']];
+ var prom='<section class="tv-about__sec"><p class="tv-kicker">Why buy from us</p><h2>Small shop. Real people.</h2><p class="tv-about__line">Here’s what you can count on.</p><ul class="tv-promises">'+pr.map(function(p){return '<li class="tv-promise">'+p[0]+'<div><b>'+p[1]+'</b><span>'+p[2]+'</span></div></li>'}).join('')+'</ul></section>';
+ return '<div class="tv-about">'+heroHTML()+ex+prom+'</div>'}
+
+function anim(el,k,o){if(!el||!el.animate)return null;return el.animate(k,o)}
+function drawFig(li){var e=EX[+li.getAttribute('data-i')],fig=li.querySelector('.tv-exhibit__fig');fig.innerHTML=T.svgOf(by[e.id],'front','',e.vb);fig.style.opacity='';var svg=fig.querySelector('svg');if(e.prep&&T[e.prep])T[e.prep](svg);return svg}
+function stopAll(li){li.getAnimations({subtree:true}).forEach(function(a){a.cancel()})}
+function playFig(li){var e=EX[+li.getAttribute('data-i')];stopAll(li);var svg=drawFig(li);if(T.RM())return;var E=T.EASE;
+ if(e.id==='aaron'){T.juggle(svg);anim(li.querySelector('.bg-sun'),[{transform:'translateY(40px)'},{transform:'translateY(0)'}],{duration:900,easing:E.out})}
+ else if(e.id==='rachel'){T.butterfly(svg);li.querySelectorAll('.fl').forEach(function(f,i){anim(f,[{transform:'scale(0)'},{transform:'scale(1.2)',offset:.7},{transform:'scale(1)'}],{duration:420,delay:120+i*110,easing:E.out,fill:'backwards'})})}
+ else if(e.id==='sky')playSky(li,svg);
+ else if(e.id==='zara')playZara(li,svg)}
+
+/* Sky: sprints in, leaps onto the pedestal, lands, and a shooting star crosses the night. */
+function playSky(li,front){var E=T.EASE,st=li.querySelector('.tv-exhibit__stage'),run=li.querySelector('.tv-exhibit__run'),fig=li.querySelector('.tv-exhibit__fig');
+ run.innerHTML=T.svgOf(by.sky,'side');var sv=run.querySelector('svg');
+ var W=st.clientWidth,h=front.getBoundingClientRect().height||132,w=h*160/230,lift=34,xEnd=W/2-w/2,xTake=Math.min(W*.16-w*.62,xEnd-w*.5),apex=Math.max(46,h*.36);
+ fig.style.opacity='0';run.style.opacity='1';
+ var RUN=640,LEAP=560,T0=RUN+LEAP;
+ anim(run,[{transform:'translate('+(-w-8)+'px,0) rotate(0deg)',easing:'linear'},{offset:RUN/T0,transform:'translate('+xTake+'px,0) rotate(0deg)',easing:'cubic-bezier(.25,.7,.45,1)'},{offset:(RUN+LEAP*.5)/T0,transform:'translate('+((xTake+xEnd)/2)+'px,'+(-(lift+apex))+'px) rotate(-14deg)',easing:'cubic-bezier(.55,0,.75,.45)'},{transform:'translate('+xEnd+'px,'+(-lift)+'px) rotate(6deg)'}],{duration:T0,fill:'forwards'});
+ var sh=sv.querySelector('ellipse');if(sh)anim(sh,[{opacity:1},{opacity:1,offset:RUN/T0},{opacity:0,offset:(RUN+80)/T0},{opacity:0}],{duration:T0,fill:'forwards'});
+ var tail=sv.querySelector('.tail');if(tail)anim(tail,[{transform:'rotate(-18deg)'},{transform:'rotate(14deg)'}],{duration:160,iterations:Math.round(T0/160),direction:'alternate'});
+ [['cl-b',-1],['cl-bb',1],['cl-f',1],['cl-ff',-1]].forEach(function(p){var l=sv.querySelector('.'+p[0]);if(!l)return;var front2=(p[0]==='cl-b'||p[0]==='cl-bb');
+  anim(l,[{transform:'rotate('+(32*p[1])+'deg)'},{transform:'rotate('+(-32*p[1])+'deg)'}],{duration:150,iterations:Math.floor(RUN/150),direction:'alternate',easing:'ease-in-out'});
+  anim(l,[{transform:'rotate(0deg)'},{transform:'rotate('+(front2?-58:58)+'deg)',offset:.35},{transform:'rotate('+(front2?-58:58)+'deg)',offset:.7},{transform:'rotate('+(front2?20:-20)+'deg)'}],{duration:LEAP,delay:RUN,easing:'ease-out',fill:'forwards'})});
+ setTimeout(function(){if(!li.isConnected)return;run.style.opacity='0';fig.style.opacity='';
+  anim(front,[{transform:'translateY(-10px) scale(.94,1.08)'},{transform:'translateY(0) scale(1.16,.82)',offset:.35},{transform:'translateY(0) scale(.96,1.04)',offset:.7},{transform:'translateY(0) scale(1,1)'}],{duration:380,easing:'ease-out'});
+  front.style.transformOrigin='50% 100%';
+  var shoot=li.querySelector('.bg-shoot');anim(shoot,[{transform:'translate(20px,30px) rotate(20deg)',opacity:0},{opacity:1,offset:.2},{opacity:1,offset:.75},{transform:'translate(190px,92px) rotate(20deg)',opacity:0}],{duration:900,delay:260,easing:'cubic-bezier(.3,.1,.4,1)',fill:'both'});
+  li.querySelectorAll('.st').forEach(function(s,i){s.style.transformBox='fill-box';s.style.transformOrigin='center';anim(s,[{transform:'scale(1)',opacity:1},{transform:'scale(1.9)',opacity:1,offset:.4},{transform:'scale(1)',opacity:.6,offset:.7},{transform:'scale(1)',opacity:1}],{duration:700,delay:300+i*90,easing:'ease-in-out'})});
+ },T0)}
+
+/* Zara: drifts down like a dropped ragdoll, flops onto her cushion, and falls asleep. */
+function playZara(li,front){var st=li.querySelector('.tv-exhibit__stage'),fig=li.querySelector('.tv-exhibit__fig'),cu=li.querySelector('.tv-exhibit__cushion'),H=st.clientHeight,F=1500;
+ fig.style.transformOrigin='50% 0%';
+ anim(fig,[{transform:'translate(0,'+(-H)+'px) rotate(-16deg)',easing:'ease-in-out'},{offset:.25,transform:'translate(18px,'+(-H*.72)+'px) rotate(14deg)',easing:'ease-in-out'},{offset:.5,transform:'translate(-16px,'+(-H*.46)+'px) rotate(-11deg)',easing:'ease-in-out'},{offset:.74,transform:'translate(10px,'+(-H*.2)+'px) rotate(7deg)',easing:'ease-in'},{transform:'translate(0,0) rotate(0deg)'}],{duration:F,fill:'backwards'});
+ front.style.transformOrigin='50% 100%';
+ anim(front,[{transform:'scale(1,1)'},{transform:'scale(1.18,.78)',offset:.3},{transform:'scale(.95,1.05)',offset:.65},{transform:'scale(1,1)'}],{duration:520,delay:F,easing:'ease-out'});
+ anim(cu,[{transform:'scaleY(1)'},{transform:'scale(1.08,.5)',offset:.3},{transform:'scale(.98,1.1)',offset:.65},{transform:'scale(1,1)'}],{duration:520,delay:F,easing:'ease-out'});
+ li.querySelectorAll('.tv-exhibit__zz i').forEach(function(z,i){anim(z,[{transform:'translate(0,0) scale(.5)',opacity:0},{transform:'translate(6px,-14px) scale(.9)',opacity:1,offset:.3},{transform:'translate(16px,-44px) scale(1.25)',opacity:0}],{duration:1500,delay:F+600+i*450,easing:'ease-out',fill:'both'})})}
+
+/* The hanging frame: swings once from its nail, then the picture light comes on. */
+function swing(h){if(!h)return;if(T.RM()){h.classList.add('is-lit');return}h.classList.remove('is-lit');
+ var a=anim(h.querySelector('.tv-hang__swing'),[{transform:'rotate(-6deg)'},{transform:'rotate(4.2deg)',offset:.22},{transform:'rotate(-2.6deg)',offset:.44},{transform:'rotate(1.4deg)',offset:.64},{transform:'rotate(-.6deg)',offset:.82},{transform:'rotate(0deg)'}],{duration:1900,easing:'ease-in-out'});
+ setTimeout(function(){h.classList.add('is-lit')},1500)}
+
+var io=null;
+function wireAbout(root){if(io)io.disconnect();var lis=root.querySelectorAll('.tv-exhibit'),hang=root.querySelector('[data-hang]');
+ lis.forEach(function(li){drawFig(li);li.querySelector('.tv-exhibit__stage').addEventListener('click',function(){playFig(li)})});
+ if(hang)hang.addEventListener('click',function(){swing(hang)});
+ io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting&&!en.target.__played){en.target.__played=1;if(en.target===hang)swing(hang);else playFig(en.target)}})},{threshold:.6});
+ lis.forEach(function(li){io.observe(li)});if(hang)io.observe(hang)}
+
+/* ---------- Joined (collector list confirmed) ---------- */
+function mountainsSVG(){var trees=[[160,206],[184,212],[214,204],[388,206],[414,212],[440,204],[60,214],[540,212],[566,206]];
+ return '<svg class="tv-joined__art" viewBox="0 0 600 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">'
+ +'<rect width="600" height="260" fill="var(--teal-tint)"/><rect width="600" height="80" fill="#e4efec"/>'
+ +'<g class="jn-sun">'+rays(412,74,26,12,12)+'<circle cx="412" cy="74" r="22" fill="var(--sun)"/></g>'
+ +'<g fill="var(--surface-card)"><rect x="170" y="52" width="70" height="14" rx="7"/><rect x="192" y="42" width="34" height="14" rx="7"/><rect x="456" y="104" width="52" height="12" rx="6"/><rect x="40" y="70" width="60" height="12" rx="6"/></g>'
+ +'<path d="M250 64 l5 -4 l5 4 M266 56 l4 -3 l4 3" stroke="var(--ink-block)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+ +'<polygon points="-10,180 60,128 120,160 190,112 240,150 360,120 430,160 500,118 610,170 610,260 -10,260" fill="var(--teal)" opacity=".32"/>'
+ +'<polygon points="-10,200 90,140 150,176 220,128 300,92 380,150 440,124 520,172 610,150 610,260 -10,260" fill="var(--teal)"/>'
+ +'<polygon points="300,92 286,111 295,108 301,116 308,107 315,111" fill="var(--surface-card)"/><polygon points="220,128 211,140 218,137 223,143 229,137" fill="var(--surface-card)"/><polygon points="440,124 431,136 438,133 443,139 449,133" fill="var(--surface-card)"/><polygon points="90,140 81,151 88,149 93,154 98,148" fill="var(--surface-card)"/>'
+ +'<g class="jn-flag"><rect x="299" y="68" width="2.6" height="25" rx="1.3" fill="var(--ink-block)"/><path d="M301.6 69 h17 l-4 5.5 l4 5.5 h-17 z" fill="var(--brand)"/></g>'
+ +'<path d="M-10 222 C 90 190, 180 206, 300 198 S 480 188, 610 206 V 260 H -10 Z" fill="#5c8f72"/>'
+ +'<g fill="#3f6e57">'+trees.map(function(t,i){var h=18+(i%3)*6;return '<polygon points="'+t[0]+','+(t[1]-h)+' '+(t[0]-7)+','+t[1]+' '+(t[0]+7)+','+t[1]+'"/>'}).join('')+'</g>'
+  +'<path d="M-10 238 C 120 218, 220 232, 300 226 S 480 216, 610 230 V 260 H -10 Z" fill="var(--brand-tint)"/>'
+ +'<g class="jn-flowers"><circle cx="190" cy="244" r="3" fill="var(--sun)"/><circle cx="214" cy="240" r="2.6" fill="var(--plum)"/><circle cx="400" cy="242" r="3" fill="var(--sun)"/><circle cx="426" cy="238" r="2.6" fill="var(--surface-card)"/><circle cx="240" cy="248" r="2.4" fill="var(--plum)"/><circle cx="370" cy="248" r="2.4" fill="var(--plum)"/></g>'
+ +'</svg>'}
+function joinedHTML(){
+ var tick='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="var(--sun)"></circle><rect x="5.6" y="11.2" width="7" height="3.6" rx="1.8" transform="rotate(45 9.1 13)" fill="var(--brand)"></rect><rect x="8.6" y="10.2" width="11" height="3.6" rx="1.8" transform="rotate(-50 14.1 12)" fill="var(--ink-block)"></rect></svg>';
+ var perks=[['Early notice.','You hear about each new piece before it goes on sale.'],['No spam.','No sales emails. Only real news about new art.'],['More to come.','Fun, collector-only extras are on the way.']];
+ return '<div class="tv-joined"><div class="tv-joined__scene">'+mountainsSVG()+'<div class="tv-joined__crew">'+T.svgOf(by.aaron,'front')+T.svgOf(by.rachel,'front')+'</div></div>'
+ +'<div class="tv-joined__card"><p class="tv-kicker">You’re in</p><h1>Welcome to the club.</h1><p class="tv-joined__lead">You’re now on the exclusive Tarver Art Collectors List. We’re so glad you’re here!</p>'
+ +'<ul class="tv-joined__perks">'+perks.map(function(p){return '<li>'+tick+'<div><b>'+p[0]+'</b><span>'+p[1]+'</span></div></li>'}).join('')+'</ul>'
+ +'<p class="tv-joined__sign">See you at the next one,<b>Aaron and Rachel</b></p>'
+ +'<div class="tv-joined__actions"><a class="tv-btn tv-btn--primary" href="#" data-go="home">See the latest print</a><a class="tv-link" href="https://www.instagram.com/tarver.art/">Follow along on Instagram</a></div></div></div>'}
+function wireJoined(root){var crew=root.querySelector('.tv-joined__crew');if(!crew)return;var sv=crew.querySelectorAll('svg'),E=T.EASE;
+ function pose(svg,part,deg){var a=svg.querySelector('.p-'+part);if(a)a.style.transform='rotate('+deg+'deg)'}
+ if(T.RM()){pose(sv[0],'armR',-150);pose(sv[1],'armL',150);return}
+ crew.animate([{transform:'translateY(40px)',opacity:0},{transform:'translateY(0)',opacity:1}],{duration:420,easing:E.spring,fill:'backwards'});
+ function wave(svg,part,sign,delay){var a=svg.querySelector('.p-'+part);if(!a)return;
+  a.animate([{transform:'rotate(0deg)'},{transform:'rotate('+(150*sign)+'deg)',offset:.2},{transform:'rotate('+(118*sign)+'deg)',offset:.35},{transform:'rotate('+(150*sign)+'deg)',offset:.5},{transform:'rotate('+(118*sign)+'deg)',offset:.65},{transform:'rotate('+(150*sign)+'deg)',offset:.8},{transform:'rotate('+(150*sign)+'deg)'}],{duration:1700,delay:delay,easing:'ease-in-out',fill:'both'})}
+ wave(sv[0],'armR',-1,350);wave(sv[1],'armL',1,520);
+ root.querySelectorAll('.jn-flowers circle').forEach(function(c,i){c.style.transformBox='fill-box';c.style.transformOrigin='center';c.animate([{transform:'scale(0)'},{transform:'scale(1.4)',offset:.7},{transform:'scale(1)'}],{duration:400,delay:500+i*90,easing:'ease-out',fill:'backwards'})});
+ var flag=root.querySelector('.jn-flag');if(flag){flag.style.transformBox='fill-box';flag.style.transformOrigin='0% 100%';flag.animate([{transform:'scaleY(0)'},{transform:'scaleY(1.1)',offset:.7},{transform:'scaleY(1)'}],{duration:500,delay:900,easing:'ease-out',fill:'backwards'})}}
+
+/* ---------- Policy pages: section cards, numbered badges, jump chips ---------- */
+function stylePolicy(root){var pol=root.querySelector('.tv-policy');if(!pol)return;pol.classList.add('tv-policy--v2');
+ var secs=pol.querySelectorAll('.tv-policy__sec'),chips=[];
+ secs.forEach(function(sec,i){var h=sec.querySelector('h2');if(!h)return;var id='pol-'+i;sec.id=id;var n=(i+1<10?'0':'')+(i+1);
+  h.insertAdjacentHTML('afterbegin','<span class="tv-policy__num" aria-hidden="true">'+n+'</span>');chips.push('<a class="tv-policy__chip" href="#'+id+'">'+h.textContent.replace(/^\d+/,'')+'</a>')});
+ var short=pol.querySelector('.tv-policy__short');var nav='<nav class="tv-policy__toc" aria-label="On this page"><p class="tv-kicker">On this page</p><div>'+chips.join('')+'</div></nav>';
+ if(short)short.insertAdjacentHTML('afterend',nav);else pol.insertAdjacentHTML('afterbegin',nav);
+ pol.querySelectorAll('.tv-policy__facts').forEach(function(dl){var dts=[].slice.call(dl.querySelectorAll(':scope > dt'));dts.forEach(function(dt){var w=document.createElement('div');w.className='tv-policy__fact';var dd=dt.nextElementSibling;dl.insertBefore(w,dt);w.appendChild(dt);if(dd&&dd.tagName==='DD')w.appendChild(dd)})});
+ var end=pol.querySelector('.tv-policy__end');if(end)end.insertAdjacentHTML('afterbegin','<span class="tv-policy__endsun" aria-hidden="true"></span>')}
+
+/* ---------- Magnifier ---------- */
+function wireMag(pl){var mag=pl.querySelector('.tv-print__mag'),st=pl.querySelector('.tv-print__stage');if(!mag||!st)return;
+ var chips=pl.querySelectorAll('.tv-chip[data-tv-close]');
+ function sync(){var on=st.classList.contains('is-close');mag.setAttribute('aria-pressed',on?'true':'false');mag.setAttribute('aria-label',on?'Back to the full view':'Look closer')}
+ mag.addEventListener('click',function(){if(st.classList.contains('is-close'))st.click();else if(chips[0])chips[0].click();sync()});
+ chips.forEach(function(c){c.addEventListener('click',function(){setTimeout(sync,0)})});st.addEventListener('click',function(){setTimeout(sync,0)})}
+
+/* ---------- pages ---------- */
+function pageHTML(p){
+ if(p==='home')return PAGES.home;
+ if(p==='about')return aboutHTML();
+ if(p==='help')return PAGES.help;
+ if(p==='joined')return joinedHTML();
+ if(p==='thanks')return PAGES.thanks.replace(/<div class="tv-thanks__scene"><\/div>/,'<div class="tv-thanks__scene"'+(S.sky==='clock'?'':' data-tv-sky="'+S.sky+'"')+'></div>');
+ return PAGES[p]}
+var LABEL={joined:'Joined',home:'Home',about:'About',help:'Help',ship:'Shipping and returns',privacy:'Privacy',terms:'Terms',thanks:'Thank you'};
+function render(){var p=S.page,cur=(p==='about'||p==='help')?p:'';
+ var e=headerEntrance();
+ frame.innerHTML='<div class="tv-web">'+headerHTML(cur,e)+'<main>'+pageHTML(p)+'</main>'+footer(p,p==='thanks'||p==='joined')+'</div>';
+ var hd=frame.querySelector('.tv-site-header');
+ hd.querySelectorAll('.tv-site-header__logo').forEach(function(a){a.setAttribute('data-go','home')});
+ if(Tarver.siteHeader)Tarver.siteHeader.wire(hd);
+ var r=runWalkIn(hd);S.visit.pages++;
+ if(p==='home'&&Tarver.printListing){var pl=frame.querySelector('.tv-print');Tarver.printListing.wire(pl);wireMag(pl);var b=pl.querySelector('.tv-print__buy');b.addEventListener('click',function(){if(b.__co)return;b.__co=1;checkout(b)})}
+ if(p==='about')wireAbout(frame);
+ if(p==='joined')wireJoined(frame);
+ if(p==='ship'||p==='privacy'||p==='terms')stylePolicy(frame);
+ if(p==='thanks'&&Tarver.thanks)Tarver.thanks.all(frame);
+ if(Tarver.join)Tarver.join.all(frame);
+ status(r)}
+function status(r){var v=S.visit,el=document.getElementById('rv-status');
+ el.innerHTML='Page <b>'+LABEL[S.page]+'</b> · Header '+(r.live&&!T.RM()?'played <b>'+NAMES[r.e.key]+'</b>':'shows the still ending of <b>'+NAMES[r.e.key]+'</b>')+' · This visit’s walk-in: <b>'+NAMES[v.entrance.key]+'</b> · Family on About seen: <b>'+(v.seenAbout?'yes':'no')+'</b> · Buy plays: <b>'+(v.seenAbout?'Aaron and Rachel':'Aaron')+'</b>';
+ document.querySelectorAll('[data-page] button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-p')===S.page?'true':'false')})}
+function go(p){S.page=p;render();var top=frame.getBoundingClientRect().top+window.pageYOffset-64;if(window.pageYOffset>top)window.scrollTo(0,top)}
+function toast(t){var el=document.getElementById('rv-toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove('on')},1800)}
+function textGo(a){var t=(a.textContent||'').toLowerCase();if(/about/.test(t))return 'about';if(/help/.test(t))return 'help';if(/shipping|returns/.test(t))return 'ship';if(/privacy/.test(t))return 'privacy';if(/terms/.test(t))return 'terms';if(/tarver/.test(a.getAttribute('aria-label')||''))return 'home';return null}
+frame.addEventListener('click',function(ev){var a=ev.target.closest('a');if(!a||!frame.contains(a))return;var href=a.getAttribute('href')||'';
+ if(/^mailto:/.test(href)){ev.preventDefault();toast('Opens your email app');return}
+ if(/^https?:/.test(href)){ev.preventDefault();toast('Opens Instagram');return}
+ if(/^#(h|pol)-/.test(href)){ev.preventDefault();var t=frame.querySelector(href);if(t)t.scrollIntoView({behavior:T.RM()?'auto':'smooth',block:'start'});return}
+ if(href==='#'||href===''){ev.preventDefault();var d=a.getAttribute('data-go')||textGo(a);if(d){var hd=frame.querySelector('.tv-site-header');if(hd&&hd.classList.contains('is-open')){var mb=hd.querySelector('.tv-site-menubtn');if(mb)mb.click()}go(d)}}});
+frame.addEventListener('submit',function(e){if(!e.target.closest('.tv-join'))e.preventDefault()},true);
+
+/* ---------- review controls ---------- */
+function seg(sel,fn){var s=document.querySelector(sel);s.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){s.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});fn(b)})})}
+seg('[data-size]',function(b){frame.setAttribute('data-w',b.getAttribute('data-w'));render()});
+seg('[data-page]',function(b){go(b.getAttribute('data-p'))});
+seg('[data-force]',function(b){S.force=b.getAttribute('data-k');newVisit();S.page='home';render()});
+seg('[data-sky]',function(b){S.sky=b.getAttribute('data-k');if(S.page==='thanks')render()});
+document.querySelector('[data-new]').addEventListener('click',function(){newVisit();S.page='home';render()});
+var rmB=document.querySelector('[data-rm]');rmB.addEventListener('click',function(){S.rm=!S.rm;rmB.setAttribute('aria-pressed',S.rm?'true':'false');render()});
+newVisit();render();
+window.__r31={S:S,go:go,newVisit:newVisit,render:render,playFig:playFig,swing:swing};
+})();
+
+</script>
+</body>
+</html>
