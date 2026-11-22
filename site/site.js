@@ -88,11 +88,13 @@ function settled(maxMs,then){
  /* The wordmark's font in (or maxMs passed), then two frames so the layout is final. Images do not move the header, so they are not waited for. */
  var done=false,go=function(){if(done)return;done=true;requestAnimationFrame(function(){requestAnimationFrame(then)})};
  setTimeout(go,maxMs);wordFont().then(go,go)}
+var wordFontReady=Promise.resolve();
 function wordFont(){var w=hdr.hd.querySelector('.tv-site-header__word'),ff=getComputedStyle(w);
  if(!doc.fonts||!doc.fonts.load)return Promise.resolve();
  return doc.fonts.load(ff.fontWeight+' '+ff.fontSize+' '+ff.fontFamily,'Tarver').then(function(){return doc.fonts.ready})}
 function walkIn(){
  hdr.wrap=doc.querySelector('.tv-site--launch');hdr.hd=hdr.wrap&&hdr.wrap.querySelector('.tv-site-header');if(!hdr.hd)return;
+ wordFontReady=wordFont();
  var live=false;
  if(page==='about'&&!visit.seenAbout){live=true;visit.seenAbout=true;visit.played=true}
  else if(!visit.played){live=true;visit.played=true}
@@ -121,14 +123,30 @@ function walkIn(){
  window.addEventListener('pageshow',function(ev){if(!ev.persisted||!hdr.drawn)return;visit=loadVisit();useEntrance(wantedEntrance());drawStill()});
 }
 
-/* ---------- sticky header: keep jump links clear of it ---------- */
-function anchorRoom(){var hd=doc.querySelector('.tv-site-header');if(!hd)return;
- /* A jump always lands with the header shrunk, so leave room for the shrunk height. */
- function set(){var h;
-  if(hd.classList.contains('is-scrolled'))h=hd.offsetHeight;
-  else{hd.classList.add('tv-hdr-measure','is-scrolled');h=hd.offsetHeight;hd.classList.remove('is-scrolled');void hd.offsetHeight;hd.classList.remove('tv-hdr-measure')}
-  doc.documentElement.style.scrollPaddingTop=Math.ceil(h+8)+'px'}
- set();window.addEventListener('resize',set);if(doc.fonts&&doc.fonts.ready)doc.fonts.ready.then(set)}
+/* ---------- sticky header ----------
+   The design system's sticky header shrinks once the page scrolls. If that shrink changed the page's height, the page would
+   jump by the difference and the browser would pull the scroll back to compensate, which feels sticky when scrolling slowly
+   with a finger. So the header's slot in the page keeps its full height; only the header inside it shrinks. Measured again
+   only when the width or the font changes, never while scrolling. */
+function stickyHeader(){var wrap=doc.querySelector('.tv-site--sticky'),hd=wrap&&wrap.querySelector('.tv-site-header');if(!hd)return;
+ var lastW=-1;
+ function lock(force){var w=wrap.clientWidth;if(w===lastW&&!force)return;lastW=w;
+  var scrolled=hd.classList.contains('is-scrolled');
+  hd.classList.add('tv-hdr-measure');
+  hd.classList.remove('is-scrolled');var full=hd.offsetHeight;
+  hd.classList.add('is-scrolled');var shrunk=hd.offsetHeight;
+  if(!scrolled)hd.classList.remove('is-scrolled');void hd.offsetHeight;
+  hd.classList.remove('tv-hdr-measure');
+  wrap.style.height=full+'px';
+  /* a jump link lands with the header shrunk, so leave room for that */
+  doc.documentElement.style.scrollPaddingTop=(shrunk+8)+'px'}
+ lock(true);
+ /* The menu moves focus to its first link when it opens, and back to the menu button when it closes. Focusing something in a
+    sticky header makes the browser scroll the page back to the header's place at the top, so focus here never scrolls. */
+ hd.querySelectorAll('a,button').forEach(function(el){el.focus=function(o){var opt={preventScroll:true};if(o)for(var k in o)opt[k]=o[k];opt.preventScroll=true;HTMLElement.prototype.focus.call(this,opt)}});
+ window.addEventListener('resize',function(){lock(false)});
+ if(doc.fonts&&doc.fonts.ready)doc.fonts.ready.then(function(){lock(true)});
+ wordFontReady.then(function(){lock(true)})}
 
 /* ---------- Buy ----------
    The header and the Buy reaction always agree: the family in the header means Aaron and Rachel cheer,
@@ -171,7 +189,7 @@ var root=doc.querySelector('main')||doc;
 T.ensureDefs();
 /* A browser may load a page ahead of the click (Edge and Chrome preloading). Hold the walk-in, and the visit's record of it, until the page is really shown. */
 if(doc.prerendering)doc.addEventListener('prerenderingchange',walkIn,{once:true});else walkIn();
-anchorRoom();
+stickyHeader();
 if(page==='home')wireBuy();
 if(page==='about'&&Tarver.about)Tarver.about.wire(root);
 if(page==='joined'&&Tarver.joined)Tarver.joined.wire(root);

@@ -14,3 +14,7 @@ a.tv-print__buy{text-decoration:none}
 /* Footer: Instagram and Facebook share a line; on a narrow phone Facebook moves down whole, never split mid handle. */
 .tv-site-footer__contact .tv-social{display:flex;flex-wrap:wrap;column-gap:.3em;row-gap:4px}
 .tv-site-footer__contact .tv-social>span{white-space:nowrap}
+/* The sticky header's slot keeps its full height (set by the site script) while the header inside shrinks.
+   The strip it leaves below the shrunk header lets taps through to the page. */
+.tv-site--sticky{pointer-events:none}
+.tv-site--sticky>.tv-site{pointer-events:auto}
