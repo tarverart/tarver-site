@@ -9,3 +9,8 @@ body{background:var(--surface-100);color:var(--ink);font-family:var(--font-sans)
 .tv-notfound .tv-btn{margin-top:var(--space-4);text-decoration:none}
 /* Buy is a link to checkout; it keeps the button's look. */
 a.tv-print__buy{text-decoration:none}
+/* Lets the site script measure the header at full size without its shrink animation showing. */
+.tv-hdr-measure,.tv-hdr-measure *{transition:none!important}
+/* Footer: Instagram and Facebook share a line; on a narrow phone Facebook moves down whole, never split mid handle. */
+.tv-site-footer__contact .tv-social{display:flex;flex-wrap:wrap;column-gap:.3em;row-gap:4px}
+.tv-site-footer__contact .tv-social>span{white-space:nowrap}

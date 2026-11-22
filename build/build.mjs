@@ -30,6 +30,7 @@ const Tarver=win.Tarver,T=Tarver.characters;
 /* ---------- settings kept in the site's own scripts ---------- */
 const siteJs=read('site/site.js');
 const STRIPE=(siteJs.match(/STRIPE_PAYMENT_LINK:'([^']*)'/)||[])[1]||'';
+const PIXEL=(siteJs.match(/META_PIXEL_ID:'(\d+)'/)||[])[1]||'';
 const aboutJs=read('site/about/about.js');
 const ABOUT=vm.runInNewContext('('+aboutJs.match(/var ABOUT=(\{[\s\S]*?\n\});/)[1]+')');
 const aboutKey=o=>{const s=JSON.stringify(o);let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return String(h)};
@@ -53,7 +54,8 @@ function header(cur){
  /* nav links and menu items: point each at its page by its label */
  h=h.replace(/<a class="(tv-site-nav__link|tv-site-menu__item)" href="#"([^>]*)>([\s\S]*?)<\/a>/g,(m,c,rest,inner)=>`<a class="${c}" href="${/About/.test(inner)?URLS.about:URLS.help}"${rest}>${inner}</a>`);
  if(/href="#"/.test(h))throw new Error('header still has a placeholder link');
- return '<div class="tv-site--launch">'+h+'</div>';
+ /* tv-site--sticky: the design system's sticky header, which shrinks once the page scrolls (Tarver.siteHeader adds is-scrolled). */
+ return '<div class="tv-site--launch tv-site--sticky">'+h+'</div>';
 }
 /* The Join box. The form is the prototype's; the typo, error and done states are the pieces Tarver.join shows and hides. */
 const JOIN_STATES_IN='<div class="tv-join__suggest"><span>Did you mean <b class="tv-join__domain"></b>?</span><button class="tv-join__fix" type="button">Fix it</button></div><p class="tv-join__error" role="alert"><span class="tv-join__bang" aria-hidden="true">!</span><span class="tv-join__msg"></span></p>';
@@ -64,7 +66,7 @@ function joinStates(html){
 let uid=0;
 function joinForm(){const id='j'+(uid++);return joinStates('<div class="tv-join"><form class="tv-join__form" novalidate><label class="tv-join__label" for="'+id+'">Join the collector list</label><p class="tv-join__hint" id="'+id+'h">New pieces first. One email per new piece.</p><input class="tv-join__input" id="'+id+'" type="email" name="email" autocomplete="email" inputmode="email" placeholder="you@email.com" aria-describedby="'+id+'h"><button class="tv-btn tv-btn--secondary tv-join__btn" type="submit"><span class="tv-join__btnlabel">Join</span><span class="tv-join__dots" aria-hidden="true"><i></i><i></i><i></i></span></button></form></div>')}
 function footer(cur,noJoin){const c=k=>cur===k?' aria-current="page"':'';
- return '<footer class="tv-site-footer"><div class="tv-site-footer__inner"><div class="tv-site-footer__about"><a class="tv-site-footer__logo" href="/" aria-label="Tarver, home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="23" y="18" width="18" height="42" rx="6" fill="currentColor"/><rect x="4" y="6" width="56" height="20" rx="7" fill="var(--brand)"/><circle cx="51" cy="49" r="9.5" fill="var(--sun)"/></svg><span class="tv-site-footer__word">Tarver</span></a><p class="tv-site-footer__tag">Art that makes you smile.</p><nav class="tv-site-footer__links" aria-label="More"><a class="tv-site-footer__pill" href="'+URLS.about+'"'+c('about')+'>'+ICON.user+'About</a><a class="tv-site-footer__pill" href="'+URLS.help+'"'+c('help')+'>'+ICON.help+'Help</a></nav><p class="tv-site-footer__contact"><span>Email: <a class="tv-link" href="mailto:'+EMAIL+'">'+EMAIL+'</a></span><span>Instagram: <a class="tv-link" href="https://www.instagram.com/tarver.art/">@tarver.art</a></span></p></div>'+(noJoin?'':joinForm())+'<div class="tv-site-footer__legal"><span><a href="'+URLS.ship+'"'+c('ship')+'>Shipping and returns</a> · <a href="'+URLS.privacy+'"'+c('privacy')+'>Privacy</a> · <a href="'+URLS.terms+'"'+c('terms')+'>Terms</a></span><span>© 2026 Aaron Tarver</span></div></div></footer>';
+ return '<footer class="tv-site-footer"><div class="tv-site-footer__inner"><div class="tv-site-footer__about"><a class="tv-site-footer__logo" href="/" aria-label="Tarver, home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="23" y="18" width="18" height="42" rx="6" fill="currentColor"/><rect x="4" y="6" width="56" height="20" rx="7" fill="var(--brand)"/><circle cx="51" cy="49" r="9.5" fill="var(--sun)"/></svg><span class="tv-site-footer__word">Tarver</span></a><p class="tv-site-footer__tag">Art that makes you smile.</p><nav class="tv-site-footer__links" aria-label="More"><a class="tv-site-footer__pill" href="'+URLS.about+'"'+c('about')+'>'+ICON.user+'About</a><a class="tv-site-footer__pill" href="'+URLS.help+'"'+c('help')+'>'+ICON.help+'Help</a></nav><p class="tv-site-footer__contact"><span>Email: <a class="tv-link" href="mailto:'+EMAIL+'">'+EMAIL+'</a></span><span class="tv-social"><span>Instagram: <a class="tv-link" href="https://www.instagram.com/tarver.art/">@tarver.art</a>&nbsp;·</span><span>Facebook: <a class="tv-link" href="https://www.facebook.com/tarverartstudio" target="_blank" rel="noopener">@tarverartstudio</a></span></span></p></div>'+(noJoin?'':joinForm())+'<div class="tv-site-footer__legal"><span><a href="'+URLS.ship+'"'+c('ship')+'>Shipping and returns</a> · <a href="'+URLS.privacy+'"'+c('privacy')+'>Privacy</a> · <a href="'+URLS.terms+'"'+c('terms')+'>Terms</a></span><span>© 2026 Aaron Tarver</span></div></div></footer>';
 }
 
 /* ---------- page markup ---------- */
@@ -143,7 +145,7 @@ ${p.wait?`<script>document.documentElement.classList.add('tv-wait');setTimeout(f
 ${(p.scripts||[]).map(s=>`<script defer src="${s}"></script>\n`).join('')}<script defer src="/site.js"></script>
 </head>
 <body data-page="${p.k}">
-<div class="tv-web">${header(cur)}<main>${p.main}</main>${footer(p.k,p.noJoin)}</div>
+${PIXEL?`<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=${PIXEL}&amp;ev=PageView&amp;noscript=1"></noscript>\n`:''}<div class="tv-web">${header(cur)}<main>${p.main}</main>${footer(p.k,p.noJoin)}</div>
 </body>
 </html>
 `;
