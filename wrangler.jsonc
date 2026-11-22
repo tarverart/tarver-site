@@ -1,0 +1,16 @@
+{
+  // tarverart.com: a static site. Cloudflare Workers serves only the site folder.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tarver-site",
+  "compatibility_date": "2025-10-01",
+  // Lets Cloudflare build a preview of each branch (npx wrangler preview). Empty is enough.
+  "previews": {},
+  "assets": {
+    // Only this folder is uploaded. The prototype, design system sources and build script stay out.
+    "directory": "./site",
+    // /about/ serves site/about/index.html
+    "html_handling": "auto-trailing-slash",
+    // Unknown addresses get site/404.html with a 404 status
+    "not_found_handling": "404-page"
+  }
+}

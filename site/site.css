@@ -1,0 +1,20 @@
+/* Page base for tarverart.com. Components come from tarver/bundle.css and are not restyled here. */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--surface-100);color:var(--ink);font-family:var(--font-sans)}
+/* Policy pages get their section cards from Tarver.policy.style; hold them back until it has run so the page does not jump. */
+.tv-wait .tv-policy{visibility:hidden}
+/* Not found page */
+.tv-notfound{margin-bottom:var(--space-16)}
+.tv-notfound .tv-btn{margin-top:var(--space-4);text-decoration:none}
+/* Buy is a link to checkout; it keeps the button's look. */
+a.tv-print__buy{text-decoration:none}
+/* Lets the site script measure the header at full size without its shrink animation showing. */
+.tv-hdr-measure,.tv-hdr-measure *{transition:none!important}
+/* Footer: Instagram and Facebook share a line; on a narrow phone Facebook moves down whole, never split mid handle. */
+.tv-site-footer__contact .tv-social{display:flex;flex-wrap:wrap;column-gap:.3em;row-gap:4px}
+.tv-site-footer__contact .tv-social>span{white-space:nowrap}
+/* The sticky header's slot keeps its full height (set by the site script) while the header inside shrinks.
+   The strip it leaves below the shrunk header lets taps through to the page. */
+.tv-site--sticky{pointer-events:none}
+.tv-site--sticky>.tv-site{pointer-events:auto}
